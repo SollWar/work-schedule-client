@@ -1,31 +1,23 @@
 'use client'
 import { getContrastTextColor } from '@/app/utils/colorsUtils'
-import { CalendarEntities } from '../Calendar/Calendar'
-import { useEffect, useState } from 'react'
 import { BottomBarLoader } from './BottomBarLoader/BottomBarLoader'
-
-export interface BottomBarEntities extends CalendarEntities {
-  count: number
-}
+import { Worker } from '../../types/Worker'
+import { Workplace } from '@/app/types/Workplace'
+import { useScheduleStore } from '@/app/stores/useScheduleStore'
 
 interface BottomBarProps {
-  entities: BottomBarEntities[]
+  entities: Worker[] | Workplace[]
+  counter: Record<string, number>
 }
 
-export const BottomBar = ({ entities }: BottomBarProps) => {
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    if (entities.length > 0) {
-      setIsVisible(true)
-    }
-  }, [entities])
+export const BottomBar = ({ counter }: BottomBarProps) => {
+  const { isLoading, entities } = useScheduleStore()
 
   return (
     <div className="relative">
       <div
         className={`transition-opacity duration-400 ease-in-out ${
-          isVisible ? 'opacity-100' : 'opacity-50 pointer-events-none'
+          !isLoading ? 'opacity-100' : 'opacity-50 pointer-events-none'
         }`}
       >
         <div className="grid grid-cols-2 gap-2">
@@ -39,12 +31,12 @@ export const BottomBar = ({ entities }: BottomBarProps) => {
               className="flex flex-row items-center justify-between text-xl h-12 p-2 rounded-[6px]"
             >
               <div>{val.name}</div>
-              <div>{val.count}</div>
+              <div>{counter[val.id] ?? 0}</div>
             </div>
           ))}
         </div>
       </div>
-      {!isVisible && (
+      {isLoading && (
         <div className="absolute inset-0">
           <BottomBarLoader />
         </div>

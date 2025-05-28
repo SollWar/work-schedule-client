@@ -1,44 +1,58 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Calendar, CalendarEntities } from './Components/Calendar/Calendar'
-import { calendarMoke } from './Components/moke/calendar'
-import { TopBar } from './Components/TopBar/TopBar'
-import { BottomBar, BottomBarEntities } from './Components/BottomBar/BottomBar'
-import { mokeBottomBarEntities } from './Components/moke/bottomBar'
+import { Calendar } from './components/Calendar/Calendar'
+import { TopBar } from './components/TopBar/TopBar'
+import { BottomBar } from './components/BottomBar/BottomBar'
+import { useMainStore } from './stores/useMainStore'
+import { useScheduleStore } from './stores/useScheduleStore'
 
 export default function Home() {
-  const [calendarEntities, setCalendarEntities] = useState<CalendarEntities[]>(
-    []
-  )
-  const [bottomBarEntities, setBottomBarEntities] = useState<
-    BottomBarEntities[]
-  >([])
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setBottomBarEntities(mokeBottomBarEntities)
-      setCalendarEntities([
-        { id: '1', name: 'Никита', color: '#4CAF50' },
-        { id: '2', name: 'Дима', color: '#3F3030' },
-      ])
-    }, 2000)
+  const { scheduleList } = useScheduleStore()
+  const [loading, setLoading] = useState(true)
+  const [counter, setCounter] = useState<Record<string, number>>({})
 
-    return () => clearTimeout(timeout)
+  const { mainData, mainStoreInit } = useMainStore()
+
+  useEffect(() => {
+    mainStoreInit('2')
   }, [])
+
+  useEffect(() => {
+    if (mainData) {
+      setLoading(false)
+    }
+  }, [mainData])
+
+  useEffect(() => {
+    if (scheduleList.length > 0) {
+      const count: Record<string, number> = {}
+      scheduleList.forEach((item) => {
+        count[item] = (count[item] || 0) + 1
+      })
+      setCounter(count)
+    } else {
+      setCounter({})
+    }
+  }, [scheduleList])
 
   return (
     <>
-      <TopBar />
-      <div className="px-1">
-        <Calendar
-          year={calendarMoke.year}
-          month={calendarMoke.month}
-          entities={calendarEntities}
-          schedule={calendarMoke.schedule}
-        />
-      </div>
-      <div className="p-1">
-        <BottomBar entities={bottomBarEntities} />
-      </div>
+      {loading ? (
+        'LOADING...'
+      ) : (
+        <div>
+          <TopBar />
+          <div className="px-1">
+            <Calendar />
+          </div>
+          <div className="mt-1 px-1">
+            <BottomBar
+              counter={counter}
+              entities={mainData!.availableWorkplaces}
+            />
+          </div>
+        </div>
+      )}
     </>
   )
 }
