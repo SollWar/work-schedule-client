@@ -20,8 +20,6 @@ export const useScheduleEditable = () => {
       updated[dayIndex] = value
       return updated
     })
-
-    //calcCounter(newSchedule)
   }
 
   const cancelEditing = () => {

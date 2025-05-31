@@ -10,22 +10,34 @@ import { useEffect, useMemo, useState } from 'react'
 import { BottomBar } from '../BottomBar/BottomBar'
 import { useMainStore } from '@/app/stores/useMainStore'
 
+const weekDays = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
+
 export const Calendar = () => {
-  // Stores
   const { mainData } = useMainStore()
   const { isLoading, scheduleList, entities, type, schedule_id } =
     useScheduleStore()
   const { year, month } = useDateStore()
 
-  // State
   const [editable, setEditable] = useState(false)
   const [counter, setCounter] = useState<Record<string, number>>({})
 
-  // Hooks
   const { newSchedule, startEditing, updateDay, cancelEditing, saveChanges } =
     useScheduleEditable()
 
-  // Memoized calculations
+  const editableEntities = useMemo(
+    () =>
+      entities
+        .filter((worker) => worker.editable === 1)
+        .map((worker) => worker.id),
+    [entities]
+  )
+  const entitiesForDropDown = useMemo(
+    () =>
+      type === 'workplace'
+        ? entities
+        : entities.filter((worker) => worker.editable === 1),
+    [entities]
+  )
   const daysInMonth = useMemo(() => getDaysInMonth(year, month), [year, month])
   const offset = useMemo(
     () => getFirstWeekdayOfMonth(year, month) - 1,
@@ -41,7 +53,6 @@ export const Calendar = () => {
     [editable, newSchedule, scheduleList]
   )
 
-  // Effect for counter calculation
   useEffect(() => {
     const newCounter = displaySchedule.reduce((acc, item) => {
       acc[item] = (acc[item] || 0) + 1
@@ -50,13 +61,13 @@ export const Calendar = () => {
     setCounter(newCounter)
   }, [displaySchedule])
 
-  // Handlers
   const handleDayChange = async (day: number, value: string) => {
     if (!editable) {
       startEditing(scheduleList)
       setEditable(true)
     }
     updateDay(day, value)
+    console.log(day, value)
   }
 
   const handleSave = () => {
@@ -69,12 +80,18 @@ export const Calendar = () => {
     setEditable(false)
   }
 
-  // Render helpers
   const renderCalendarDay = (val: string, ind: number) => {
     const backgroundColor =
       val === 'X' ? 'red' : entityMap.get(val)?.color ?? '#FFFFFF'
     const textColor =
       val === 'X' ? 'white' : getContrastTextColor(backgroundColor)
+    const userId = mainData?.user.id ?? ''
+    const enabled =
+      type === 'workplace'
+        ? editableEntities.includes(userId)
+        : type === 'worker'
+        ? editableEntities.includes(val) || val === '0'
+        : false
 
     return (
       <div
@@ -83,9 +100,10 @@ export const Calendar = () => {
         style={{ backgroundColor, color: textColor }}
       >
         <CalendarDropDown
+          enabled={enabled}
           day={ind}
           onSelectChange={handleDayChange}
-          items={entities}
+          items={entitiesForDropDown}
         >
           {ind + 1}
         </CalendarDropDown>
@@ -95,6 +113,16 @@ export const Calendar = () => {
 
   return (
     <div className="relative">
+      <div className="grid grid-cols-7 gap-0.5 mb-0.5">
+        {weekDays.map((day, index) => (
+          <div
+            key={index}
+            className="text-center text-xl bg-amber-200 rounded-[6px]"
+          >
+            {day}
+          </div>
+        ))}{' '}
+      </div>
       <div
         className={`transition-opacity duration-400 ease-in-out ${
           isLoading ? 'opacity-50 pointer-events-none' : 'opacity-100'

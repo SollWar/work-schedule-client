@@ -2,22 +2,32 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { Worker } from '../../types/Worker'
 import { Workplace } from '../../types/Workplace'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMainStore } from '@/app/stores/useMainStore'
 import { useScheduleStore } from '@/app/stores/useScheduleStore'
 import { useDateStore } from '@/app/stores/useDateStore'
 
 export const PlaceDropDown = () => {
   const { mainData } = useMainStore()
-  const { getSchedule } = useScheduleStore()
+  const { getSchedule, type } = useScheduleStore()
   const { year, month } = useDateStore()
   const [selected, setSelected] = useState<Worker | Workplace>(
     mainData!.availableWorkers[0]
   )
+  const initialValues = useRef({ type, mainData, year, month })
 
   const selectWork = (type: 'worker' | 'workplace', id: string) => {
     getSchedule(type, id, year, month)
   }
+
+  useEffect(() => {
+    getSchedule(
+      initialValues.current.type,
+      initialValues.current.mainData!.user.id,
+      initialValues.current.year,
+      initialValues.current.month
+    )
+  }, [])
 
   return (
     <DropdownMenu.Root modal={false}>

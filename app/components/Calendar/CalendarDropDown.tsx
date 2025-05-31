@@ -6,12 +6,14 @@ interface CalendarEntities {
   id: string
   name: string
   color: string
+  editable?: number
 }
 
 interface CalendarDropDownProps {
   day: number
   items: CalendarEntities[]
   children: ReactNode
+  enabled: boolean
   onSelectChange: (day: number, value: string) => void
 }
 
@@ -19,6 +21,7 @@ export const CalendarDropDown = ({
   day,
   items,
   children,
+  enabled,
   onSelectChange,
 }: CalendarDropDownProps) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -30,6 +33,7 @@ export const CalendarDropDown = ({
       modal={false}
     >
       <DropdownMenu.Trigger
+        disabled={!enabled}
         style={{
           border: isOpen ? '2px red dashed' : '',
         }}

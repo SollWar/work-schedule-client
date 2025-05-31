@@ -37,9 +37,8 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
     }))
   },
   async getSchedule(type, id, year, month) {
+    set({ isLoading: true, scheduleList: [], entities: [], schedule_id: '' })
     if (type === 'worker') {
-      set({ isLoading: true, scheduleList: [], entities: [], schedule_id: '' })
-
       try {
         const schedule = await fetchTyped<Schedule>(
           `http://localhost:3001/api/schedule?worker_id=${id}&year=${year}&month=${month}`
@@ -69,7 +68,6 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
         set({ isLoading: false })
       }
     } else if (type === 'workplace') {
-      set({ isLoading: true, scheduleList: [], entities: [], schedule_id: '' })
       try {
         const [schedules, entities] = await Promise.all([
           fetchTyped<Schedule[]>(
