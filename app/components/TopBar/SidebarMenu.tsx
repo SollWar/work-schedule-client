@@ -14,13 +14,13 @@ const SidebarMenu: React.FC = () => {
         H
       </button>
       <div
-        className={`fixed inset-0 bg-white transition-opacity duration-300 z-40 ${
+        className={`fixed inset-0 bg-white transition-opacity z-40 ${
           isOpen ? 'opacity-80 visible' : 'opacity-0 invisible'
         }`}
         onClick={() => setIsOpen(false)}
       />
       <div
-        className={`fixed top-0 left-0 h-full w-[80%] bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out
+        className={`fixed top-0 left-0 h-full w-[80%] bg-white shadow-lg z-50 transition-all duration-200 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >

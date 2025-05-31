@@ -1,7 +1,12 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { ReactNode, useState } from 'react'
-import { CalendarEntities } from './Calendar'
 import { getContrastTextColor } from '@/app/utils/colorsUtils'
+
+interface CalendarEntities {
+  id: string
+  name: string
+  color: string
+}
 
 interface CalendarDropDownProps {
   day: number
@@ -49,6 +54,19 @@ export const CalendarDropDown = ({
               {val.name}
             </DropdownMenu.Item>
           ))}
+          <DropdownMenu.Item
+            style={{
+              background: 'white',
+              color: 'black',
+            }}
+            className="text-xl p-2.5 px-5 rounded-[6px] mb-0.5"
+            key={'day_off'}
+            onClick={() => {
+              setTimeout(() => onSelectChange(day, '0'), 0)
+            }}
+          >
+            {'Выходной'}
+          </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>

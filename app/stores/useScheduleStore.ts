@@ -9,6 +9,9 @@ interface ScheduleStoreState {
   scheduleList: string[]
   entities: Worker[] | Workplace[]
   isLoading: boolean
+  type: 'worker' | 'workplace'
+  schedule_id: string
+  updatingSchedule: () => void
   setSchedule: (schedule: string[]) => void
   getSchedule: (
     type: 'worker' | 'workplace',
@@ -22,6 +25,11 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
   entities: [],
   scheduleList: [],
   isLoading: true,
+  type: 'worker',
+  schedule_id: '',
+  updatingSchedule() {
+    set({ isLoading: true, scheduleList: [], entities: [] })
+  },
   setSchedule(schedule) {
     set((prev) => ({
       ...prev,
@@ -30,7 +38,7 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
   },
   async getSchedule(type, id, year, month) {
     if (type === 'worker') {
-      set({ isLoading: true, scheduleList: [], entities: [] })
+      set({ isLoading: true, scheduleList: [], entities: [], schedule_id: '' })
 
       try {
         const schedule = await fetchTyped<Schedule>(
@@ -39,16 +47,29 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
         const entities = await fetchTyped<Workplace[]>(
           `http://localhost:3001/api/workplaces?worker_id=${id}`
         )
-        set({
-          scheduleList: schedule.schedule.split(','),
-          entities: entities,
-          isLoading: false,
-        })
+
+        if (schedule.schedule !== '') {
+          set({
+            schedule_id: id,
+            scheduleList: schedule.schedule.split(','),
+            type: 'worker',
+            entities: entities,
+            isLoading: false,
+          })
+        } else {
+          set({
+            schedule_id: id,
+            scheduleList: new Array(getDaysInMonth(year, month)).fill('0'),
+            type: 'worker',
+            entities: entities,
+            isLoading: false,
+          })
+        }
       } catch {
         set({ isLoading: false })
       }
     } else if (type === 'workplace') {
-      set({ isLoading: true, scheduleList: [] })
+      set({ isLoading: true, scheduleList: [], entities: [], schedule_id: '' })
       try {
         const [schedules, entities] = await Promise.all([
           fetchTyped<Schedule[]>(
@@ -94,6 +115,8 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
         }
         console.log(schedule)
         set({
+          schedule_id: id,
+          type: 'workplace',
           entities: entities,
           scheduleList: schedule,
           isLoading: false,
