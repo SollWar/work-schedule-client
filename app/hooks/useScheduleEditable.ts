@@ -35,7 +35,7 @@ export const useScheduleEditable = () => {
   ) => {
     updatingSchedule()
     const response = await fetchTyped<boolean>(
-      'http://localhost:3001/api/up_schedule',
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/up_schedule`,
       {
         method: 'POST',
         headers: {

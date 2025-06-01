@@ -36,7 +36,7 @@ export const Calendar = () => {
       type === 'workplace'
         ? entities
         : entities.filter((worker) => worker.editable === 1),
-    [entities]
+    [entities, type]
   )
   const daysInMonth = useMemo(() => getDaysInMonth(year, month), [year, month])
   const offset = useMemo(
@@ -156,13 +156,13 @@ export const Calendar = () => {
         <div className="grid grid-cols-2 gap-2 mt-1">
           <button
             onClick={handleSave}
-            className="flex text-white bg-amber-500 items-center justify-start text-xl h-12 p-2 rounded-[6px]"
+            className="flex bg-[#12C739] text-white items-center justify-start text-xl h-12 p-2 rounded-[6px]"
           >
             Сохранить
           </button>
           <button
             onClick={handleCancel}
-            className="flex text-white bg-amber-800 items-center justify-end text-xl h-12 p-2 rounded-[6px]"
+            className="flex bg-[#EF4444] text-white items-center justify-end text-xl h-12 p-2 rounded-[6px]"
           >
             Отмена
           </button>

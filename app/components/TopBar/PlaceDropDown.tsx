@@ -9,7 +9,7 @@ import { useDateStore } from '@/app/stores/useDateStore'
 
 export const PlaceDropDown = () => {
   const { mainData } = useMainStore()
-  const { getSchedule, type } = useScheduleStore()
+  const { getSchedule, type, scheduleList } = useScheduleStore()
   const { year, month } = useDateStore()
   const [selected, setSelected] = useState<Worker | Workplace>(
     mainData!.availableWorkers[0]
@@ -27,11 +27,11 @@ export const PlaceDropDown = () => {
       initialValues.current.year,
       initialValues.current.month
     )
-  }, [])
+  }, [getSchedule])
 
   return (
     <DropdownMenu.Root modal={false}>
-      <DropdownMenu.Trigger className="bg-[#2B7FFF]  text-white px-4 h-full flex items-center rounded-[6px] ms-1 focus:outline-none active:outline-none">
+      <DropdownMenu.Trigger className="bg-[#2B7FFF] text-white px-4 h-full flex items-center rounded-[6px] ms-1 focus:outline-none active:outline-none">
         {selected.name}
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>

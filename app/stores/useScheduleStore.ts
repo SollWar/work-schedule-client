@@ -41,10 +41,10 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
     if (type === 'worker') {
       try {
         const schedule = await fetchTyped<Schedule>(
-          `http://localhost:3001/api/schedule?worker_id=${id}&year=${year}&month=${month}`
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/schedule?worker_id=${id}&year=${year}&month=${month}`
         )
         const entities = await fetchTyped<Workplace[]>(
-          `http://localhost:3001/api/workplaces?worker_id=${id}`
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplaces?worker_id=${id}`
         )
 
         if (schedule.schedule !== '') {
@@ -71,10 +71,10 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
       try {
         const [schedules, entities] = await Promise.all([
           fetchTyped<Schedule[]>(
-            `http://localhost:3001/api/schedules?workplace_id=${id}&year=${year}&month=${month}`
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/schedules?workplace_id=${id}&year=${year}&month=${month}`
           ),
           fetchTyped<Workplace[]>(
-            `http://localhost:3001/api/users?workplace_id=${id}`
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users?workplace_id=${id}`
           ),
         ])
         const schedule: string[] = new Array(getDaysInMonth(year, month)).fill(

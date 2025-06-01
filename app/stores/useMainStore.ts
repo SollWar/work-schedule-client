@@ -11,7 +11,7 @@ export const useMainStore = create<MainStoreState>((set) => ({
   mainData: null,
   async mainStoreInit(telegram_id) {
     const result = await fetchTyped<MainData>(
-      `http://localhost:3001/api/main?telegram_id=${telegram_id}`
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main?telegram_id=${telegram_id}`
     )
     set({
       mainData: result,
