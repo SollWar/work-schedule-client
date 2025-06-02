@@ -9,7 +9,7 @@ export default function Home() {
   const [loading, setLoading] = useState(mainData === null)
 
   useEffect(() => {
-    mainStoreInit('2')
+    mainStoreInit('1')
   }, [])
 
   useEffect(() => {

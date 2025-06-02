@@ -155,16 +155,16 @@ export const Calendar = () => {
       {editable && (
         <div className="grid grid-cols-2 gap-2 mt-1">
           <button
-            onClick={handleSave}
-            className="flex bg-[#12C739] text-white items-center justify-start text-xl h-12 p-2 rounded-[6px]"
-          >
-            Сохранить
-          </button>
-          <button
             onClick={handleCancel}
-            className="flex bg-[#EF4444] text-white items-center justify-end text-xl h-12 p-2 rounded-[6px]"
+            className="flex bg-[#EF4444] text-white items-center justify-center text-xl h-12 p-2 rounded-[6px]"
           >
             Отмена
+          </button>
+          <button
+            onClick={handleSave}
+            className="flex bg-[#12C739] text-white items-center justify-center text-xl h-12 p-2 rounded-[6px]"
+          >
+            Сохранить
           </button>
         </div>
       )}

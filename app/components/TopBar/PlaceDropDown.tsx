@@ -20,6 +20,7 @@ export const PlaceDropDown = () => {
     getSchedule(type, id, year, month)
   }
 
+  //TODO(После экрана настроек неверное отображение. Дима->М7->Настройки->Назад)
   useEffect(() => {
     getSchedule(
       initialValues.current.type,
@@ -27,7 +28,8 @@ export const PlaceDropDown = () => {
       initialValues.current.year,
       initialValues.current.month
     )
-  }, [getSchedule])
+    console.log('as')
+  }, [])
 
   return (
     <DropdownMenu.Root modal={false}>
