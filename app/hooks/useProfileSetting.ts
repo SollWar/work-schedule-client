@@ -12,7 +12,6 @@ export const useProfileSetting = () => {
       const result = await fetchTyped<TelegramAuth[]>(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/telegram?id=${mainData?.user.id}`
       )
-      console.log(result)
       setTelegramIds(result)
     }
   }

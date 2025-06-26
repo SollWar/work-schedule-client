@@ -9,7 +9,7 @@ import { useDateStore } from '@/app/stores/useDateStore'
 
 export const PlaceDropDown = () => {
   const { mainData } = useMainStore()
-  const { getSchedule, type, scheduleList } = useScheduleStore()
+  const { getSchedule, type } = useScheduleStore()
   const { year, month } = useDateStore()
   const [selected, setSelected] = useState<Worker | Workplace>(
     mainData!.availableWorkers[0]
@@ -28,7 +28,6 @@ export const PlaceDropDown = () => {
       initialValues.current.year,
       initialValues.current.month
     )
-    console.log('as')
   }, [])
 
   return (

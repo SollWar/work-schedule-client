@@ -111,7 +111,6 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
             schedule[i] = foundWorkerId
           }
         }
-        console.log(schedule)
         set({
           schedule_id: id,
           type: 'workplace',

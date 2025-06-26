@@ -1,18 +1,18 @@
 import React from 'react'
 
-type UpdateDialogProps = {
+type ModalInputProps = {
   isOpen: boolean
   onClose: () => void
   children: React.ReactNode
   closeButton: boolean
 }
 
-const UpdateDialog = ({
+const ModalInput = ({
   isOpen,
   onClose,
   children,
   closeButton,
-}: UpdateDialogProps) => {
+}: ModalInputProps) => {
   if (!isOpen) return null
 
   return (
@@ -42,4 +42,4 @@ const UpdateDialog = ({
   )
 }
 
-export default UpdateDialog
+export default ModalInput

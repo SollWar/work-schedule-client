@@ -3,19 +3,19 @@ import { useEffect, useState } from 'react'
 import { HexColorPicker } from 'react-colorful'
 import { getContrastTextColor } from '@/app/utils/colorsUtils'
 
-interface ColorPickerDialogProps {
+interface ModalColorPickerProps {
   selectColor: (color: string) => void
   userName: string
   initColor: string
   onClose: () => void
 }
 
-const ColorPickerDialog = ({
+const ModalColorPicker = ({
   userName,
   selectColor,
   initColor,
   onClose,
-}: ColorPickerDialogProps) => {
+}: ModalColorPickerProps) => {
   const [color, setColor] = useState(initColor)
   const [update, setUpdate] = useState(false)
 
@@ -55,6 +55,10 @@ const ColorPickerDialog = ({
       <div className="grid grid-cols-2 gap-2 w-full mx-auto my-1">
         <button
           onClick={onClose}
+          style={{
+            background: update ? 'gray' : '#EF4444',
+          }}
+          disabled={update}
           className="flex bg-[#EF4444] text-white items-center justify-center text-xl p-1.5 rounded-[6px]"
         >
           Отмена
@@ -66,7 +70,11 @@ const ColorPickerDialog = ({
               setUpdate(true)
             }
           }}
-          className="flex bg-[#12C739] text-white items-center justify-center text-xl p-1.5 rounded-[6px]"
+          style={{
+            background: update ? 'gray' : '#12C739',
+          }}
+          disabled={update}
+          className="flex bg-[#12C739] text-white items-center justify-center text-xl p-1.5 rounded-[6px] "
         >
           Сохранить
         </button>
@@ -75,4 +83,4 @@ const ColorPickerDialog = ({
   )
 }
 
-export default ColorPickerDialog
+export default ModalColorPicker

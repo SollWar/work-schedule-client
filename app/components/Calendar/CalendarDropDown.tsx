@@ -1,6 +1,7 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { ReactNode, useState } from 'react'
 import { getContrastTextColor } from '@/app/utils/colorsUtils'
+import { useThemeStore } from '@/app/stores/useThemeStore'
 
 interface CalendarEntities {
   id: string
@@ -25,6 +26,7 @@ export const CalendarDropDown = ({
   onSelectChange,
 }: CalendarDropDownProps) => {
   const [isOpen, setIsOpen] = useState(false)
+  const { themeConst } = useThemeStore()
   return (
     <DropdownMenu.Root
       onOpenChange={(open) => {
@@ -42,7 +44,12 @@ export const CalendarDropDown = ({
         {children}
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content className="p-1 mx-1 bg-white rounded-[6px] border-1">
+        <DropdownMenu.Content
+          style={{
+            background: themeConst.secondBackground,
+          }}
+          className="p-1 mx-1 bg-white rounded-[6px] border-1"
+        >
           {items.map((val, ind) => (
             <DropdownMenu.Item
               style={{
@@ -58,6 +65,7 @@ export const CalendarDropDown = ({
               {val.name}
             </DropdownMenu.Item>
           ))}
+
           <DropdownMenu.Item
             style={{
               background: 'white',

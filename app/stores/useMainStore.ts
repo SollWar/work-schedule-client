@@ -4,14 +4,34 @@ import { MainData } from '../types/MainData'
 
 interface MainStoreState {
   mainData: MainData | null
-  mainStoreInit: (telegram_id: string) => void
+  telegramId: string | null
+  mainStoreInit: () => void
+  setTelegramId: (telegramId: string) => void
+  reloadMainStore: () => Promise<void>
 }
 
-export const useMainStore = create<MainStoreState>((set) => ({
+export const useMainStore = create<MainStoreState>((set, get) => ({
   mainData: null,
-  async mainStoreInit(telegram_id) {
+  telegramId: null,
+  setTelegramId(telegramId) {
+    set({
+      telegramId: telegramId,
+    })
+  },
+  async reloadMainStore() {
     const result = await fetchTyped<MainData>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main?telegram_id=${telegram_id}`
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main`
+    )
+    set({
+      mainData: null,
+    })
+    set({
+      mainData: result,
+    })
+  },
+  async mainStoreInit() {
+    const result = await fetchTyped<MainData>(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main`
     )
     set({
       mainData: result,

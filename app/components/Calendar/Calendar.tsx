@@ -9,6 +9,7 @@ import { useScheduleEditable } from '@/app/hooks/useScheduleEditable'
 import { useEffect, useMemo, useState } from 'react'
 import { BottomBar } from '../BottomBar/BottomBar'
 import { useMainStore } from '@/app/stores/useMainStore'
+import { useThemeStore } from '@/app/stores/useThemeStore'
 
 const weekDays = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
 
@@ -17,6 +18,7 @@ export const Calendar = () => {
   const { isLoading, scheduleList, entities, type, schedule_id } =
     useScheduleStore()
   const { year, month } = useDateStore()
+  const { themeConst } = useThemeStore()
 
   const [editable, setEditable] = useState(false)
   const [counter, setCounter] = useState<Record<string, number>>({})
@@ -67,7 +69,6 @@ export const Calendar = () => {
       setEditable(true)
     }
     updateDay(day, value)
-    console.log(day, value)
   }
 
   const handleSave = () => {
@@ -90,7 +91,7 @@ export const Calendar = () => {
       type === 'workplace'
         ? editableEntities.includes(userId)
         : type === 'worker'
-        ? editableEntities.includes(val) || val === '0'
+        ? editableEntities.includes(val) || val === '0' || val === ''
         : false
 
     return (
@@ -117,7 +118,10 @@ export const Calendar = () => {
         {weekDays.map((day, index) => (
           <div
             key={index}
-            className="text-center text-xl bg-amber-200 rounded-[6px]"
+            style={{
+              background: themeConst.background,
+            }}
+            className={`text-center text-xl rounded-[6px]`}
           >
             {day}
           </div>
@@ -156,13 +160,21 @@ export const Calendar = () => {
         <div className="grid grid-cols-2 gap-2 mt-1">
           <button
             onClick={handleCancel}
-            className="flex bg-[#EF4444] text-white items-center justify-center text-xl h-12 p-2 rounded-[6px]"
+            style={{
+              background: themeConst.cancelButton,
+              color: themeConst.text,
+            }}
+            className={`flex items-center justify-center text-xl h-12 p-2 rounded-[6px]`}
           >
             Отмена
           </button>
           <button
             onClick={handleSave}
-            className="flex bg-[#12C739] text-white items-center justify-center text-xl h-12 p-2 rounded-[6px]"
+            style={{
+              background: themeConst.acceptButton,
+              color: themeConst.text,
+            }}
+            className={`flex items-center justify-center text-xl h-12 p-2 rounded-[6px]`}
           >
             Сохранить
           </button>
