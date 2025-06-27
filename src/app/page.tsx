@@ -1,12 +1,12 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Calendar } from './components/Calendar/Calendar'
-import { TopBar } from './components/TopBar/TopBar'
-import { useMainStore } from './stores/useMainStore'
-import { useSystemTheme } from './hooks/useSystemTheme'
+import { Calendar } from '../components/Calendar/Calendar'
+import { TopBar } from '../components/TopBar/TopBar'
+import { useMainStore } from '../stores/useMainStore'
+import { useSystemTheme } from '../hooks/useSystemTheme'
 import Image from 'next/image'
 import styles from './page.module.css'
-import { useTelegramAuth } from './hooks/useTelegramAuth'
+import { useTelegramAuth } from '../hooks/useTelegramAuth'
 
 export default function Home() {
   useSystemTheme()

@@ -3,8 +3,8 @@ import { Worker } from '../types/Worker'
 import fetchTyped from '../utils/fetchTyped'
 import { useMainStore } from '../stores/useMainStore'
 import { Workplace, WorkplaceForSetting } from '../types/Workplace'
-import { useGetData } from '../settings/hooks/useGetData'
-import { useUpdateUserData } from '../settings/hooks/useUpdateUserData'
+import { useGetData } from '../app/settings/hooks/useGetData'
+import { useUpdateUserData } from '../app/settings/hooks/useUpdateUserData'
 
 export const useWorkerData = () => {
   const [worker, setWorker] = useState<Worker>()

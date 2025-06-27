@@ -2,9 +2,9 @@
 import { useRouter } from 'next/navigation'
 import { DateDropDown } from './DateDropDown'
 import { PlaceDropDown } from './PlaceDropDown'
-import { useDateStore } from '@/app/stores/useDateStore'
+import { useDateStore } from '@/src/stores/useDateStore'
 import Image from 'next/image'
-import { useThemeStore } from '@/app/stores/useThemeStore'
+import { useThemeStore } from '@/src/stores/useThemeStore'
 
 export const TopBar = () => {
   const router = useRouter()

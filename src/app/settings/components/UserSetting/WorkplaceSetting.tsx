@@ -1,10 +1,10 @@
 import Image from 'next/image'
-import { useWorkplaceData } from '@/app/hooks/useWorkplaceData'
+import { useWorkplaceData } from '@/src/hooks/useWorkplaceData'
 import { useEffect, useState } from 'react'
 import ModalInput from '../Dialog/ModalInput'
 import ModalColorPicker from '../Dialog/ModalColorPicker'
 import { useRouter } from 'next/navigation'
-import { getContrastTextColor } from '@/app/utils/colorsUtils'
+import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { useUpdateWorkplaceData } from '../../hooks/useUpdateWorkplaceData'
 
 interface WorkplaceSettingProps {

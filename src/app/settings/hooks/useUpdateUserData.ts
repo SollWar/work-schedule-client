@@ -1,5 +1,5 @@
-import { WorkplaceForSetting } from '@/app/types/Workplace'
-import fetchTyped from '@/app/utils/fetchTyped'
+import { WorkplaceForSetting } from '@/src/types/Workplace'
+import fetchTyped from '@/src/utils/fetchTyped'
 
 export const useUpdateUserData = () => {
   const updateWorkplace = async (

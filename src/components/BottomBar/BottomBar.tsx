@@ -1,9 +1,9 @@
 'use client'
-import { getContrastTextColor } from '@/app/utils/colorsUtils'
+import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { BottomBarLoader } from './BottomBarLoader/BottomBarLoader'
 import { Worker } from '../../types/Worker'
-import { Workplace } from '@/app/types/Workplace'
-import { useScheduleStore } from '@/app/stores/useScheduleStore'
+import { Workplace } from '@/src/types/Workplace'
+import { useScheduleStore } from '@/src/stores/useScheduleStore'
 
 interface BottomBarProps {
   entities: Worker[] | Workplace[]

@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { useMainStore } from '../stores/useMainStore'
+import { useMainStore } from '../../stores/useMainStore'
 import { useEffect, useState } from 'react'
 import { useGetData } from './hooks/useGetData'
 import UserSetting from './components/UserSetting/UserSetting'

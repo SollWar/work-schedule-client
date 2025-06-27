@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import { useUpdateUserData } from '../../hooks/useUpdateUserData'
 import ModalInput from '../Dialog/ModalInput'
 import ModalColorPicker from '../Dialog/ModalColorPicker'
-import { getContrastTextColor } from '@/app/utils/colorsUtils'
+import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { useRouter } from 'next/navigation'
-import { useWorkerData } from '@/app/hooks/useWorkerData'
+import { useWorkerData } from '@/src/hooks/useWorkerData'
 
 interface UserSettingProps {
   workerId: string

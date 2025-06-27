@@ -1,6 +1,6 @@
-import { Workplace } from '@/app/types/Workplace'
-import { Worker } from '@/app/types/Worker'
-import fetchTyped from '@/app/utils/fetchTyped'
+import { Workplace } from '@/src/types/Workplace'
+import { Worker } from '@/src/types/Worker'
+import fetchTyped from '@/src/utils/fetchTyped'
 import { useState } from 'react'
 
 export const useGetData = () => {

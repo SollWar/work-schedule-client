@@ -1,7 +1,7 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { ReactNode, useState } from 'react'
-import { getContrastTextColor } from '@/app/utils/colorsUtils'
-import { useThemeStore } from '@/app/stores/useThemeStore'
+import { getContrastTextColor } from '@/src/utils/colorsUtils'
+import { useThemeStore } from '@/src/stores/useThemeStore'
 
 interface CalendarEntities {
   id: string

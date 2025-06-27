@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { HexColorPicker } from 'react-colorful'
-import { getContrastTextColor } from '@/app/utils/colorsUtils'
+import { getContrastTextColor } from '@/src/utils/colorsUtils'
 
 interface ModalColorPickerProps {
   selectColor: (color: string) => void

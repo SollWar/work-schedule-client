@@ -3,9 +3,9 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { Worker } from '../../types/Worker'
 import { Workplace } from '../../types/Workplace'
 import { useEffect, useRef, useState } from 'react'
-import { useMainStore } from '@/app/stores/useMainStore'
-import { useScheduleStore } from '@/app/stores/useScheduleStore'
-import { useDateStore } from '@/app/stores/useDateStore'
+import { useMainStore } from '@/src/stores/useMainStore'
+import { useScheduleStore } from '@/src/stores/useScheduleStore'
+import { useDateStore } from '@/src/stores/useDateStore'
 
 export const PlaceDropDown = () => {
   const { mainData } = useMainStore()

@@ -1,15 +1,15 @@
 'use client'
 import { CalendarDropDown } from './CalendarDropDown'
-import { getContrastTextColor } from '@/app/utils/colorsUtils'
+import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { CalendarLoader } from './CalendarLoader/CalendarLoader'
-import { getDaysInMonth, getFirstWeekdayOfMonth } from '@/app/utils/dateUtils'
-import { useDateStore } from '@/app/stores/useDateStore'
-import { useScheduleStore } from '@/app/stores/useScheduleStore'
-import { useScheduleEditable } from '@/app/hooks/useScheduleEditable'
+import { getDaysInMonth, getFirstWeekdayOfMonth } from '@/src/utils/dateUtils'
+import { useDateStore } from '@/src/stores/useDateStore'
+import { useScheduleStore } from '@/src/stores/useScheduleStore'
+import { useScheduleEditable } from '@/src/hooks/useScheduleEditable'
 import { useEffect, useMemo, useState } from 'react'
 import { BottomBar } from '../BottomBar/BottomBar'
-import { useMainStore } from '@/app/stores/useMainStore'
-import { useThemeStore } from '@/app/stores/useThemeStore'
+import { useMainStore } from '@/src/stores/useMainStore'
+import { useThemeStore } from '@/src/stores/useThemeStore'
 
 const weekDays = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
 

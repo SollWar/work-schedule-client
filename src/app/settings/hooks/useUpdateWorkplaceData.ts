@@ -1,4 +1,4 @@
-import fetchTyped from '@/app/utils/fetchTyped'
+import fetchTyped from '@/src/utils/fetchTyped'
 
 export const useUpdateWorkplaceData = () => {
   const updateName = async (
