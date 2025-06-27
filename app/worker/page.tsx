@@ -1,10 +1,6 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
-import fetchTyped from '../utils/fetchTyped'
-import { useEffect, useState } from 'react'
-import { Worker } from '../types/Worker'
 import UserSetting from '../settings/components/UserSetting/UserSetting'
-import { useWorkerData } from '../hooks/useWorkerData'
 
 const WorkerPage = () => {
   const searchParams = useSearchParams()

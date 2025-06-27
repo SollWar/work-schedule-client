@@ -2,20 +2,22 @@ import { useEffect, useState } from 'react'
 import { Worker } from '../types/Worker'
 import fetchTyped from '../utils/fetchTyped'
 import { useMainStore } from '../stores/useMainStore'
-import { Workplace } from '../types/Workplace'
+import { Workplace, WorkplaceForSetting } from '../types/Workplace'
 import { useGetData } from '../settings/hooks/useGetData'
-
-interface WorkplaceForSetting extends Workplace {
-  enabled?: boolean
-}
+import { useUpdateUserData } from '../settings/hooks/useUpdateUserData'
 
 export const useWorkerData = () => {
   const [worker, setWorker] = useState<Worker>()
+  const { updateWorkplace } = useUpdateUserData()
   const [workplaces, setWorkplaces] = useState<Workplace[]>([])
   const { mainData, reloadMainStore } = useMainStore()
+  const [updateMode, setUpdateMode] = useState(false)
   const { workplaces: allWorkplaces, getWorkplaces: getAllWorkplaces } =
     useGetData()
   const [workplacesForSetting, setWorkplacesForSetting] = useState<
+    WorkplaceForSetting[]
+  >([])
+  const [prevWorkplacesForSetting, setPrevWorkplacesForSetting] = useState<
     WorkplaceForSetting[]
   >([])
 
@@ -24,6 +26,47 @@ export const useWorkerData = () => {
       generateWorkplacesForSetting()
     }
   }, [allWorkplaces, workplaces])
+
+  const enableUpdateMode = () => {
+    if (!updateMode) {
+      setPrevWorkplacesForSetting(workplacesForSetting)
+      setUpdateMode(true)
+    }
+  }
+
+  const disableUpdateMode = () => {
+    if (updateMode) {
+      setWorkplacesForSetting(prevWorkplacesForSetting)
+      setPrevWorkplacesForSetting([])
+      setUpdateMode(false)
+    }
+  }
+
+  const doUpdateWorkplace = async () => {
+    if (worker) {
+      await updateWorkplace(worker.id, workplacesForSetting)
+      await getWorkerWorkplaces(worker.id)
+    }
+    disableUpdateMode()
+  }
+
+  const notUpdateWorkplace = () => {
+    disableUpdateMode()
+  }
+
+  const updateWorkplaceEnabled = (id: string, enabled: boolean) => {
+    enableUpdateMode()
+    setWorkplacesForSetting((prev) =>
+      prev.map((wp) => (wp.id === id ? { ...wp, enabled } : wp))
+    )
+  }
+
+  const updateWorkplaceEditable = (id: string, editable: number) => {
+    enableUpdateMode()
+    setWorkplacesForSetting((prev) =>
+      prev.map((wp) => (wp.id === id ? { ...wp, editable } : wp))
+    )
+  }
 
   const generateWorkplacesForSetting = () => {
     const mapFromWorkplaces = new Map<string, Workplace>(
@@ -36,7 +79,7 @@ export const useWorkerData = () => {
       return {
         ...item,
         enabled: !!match,
-        editable: match?.editable, // заменяем null на значение, если есть
+        editable: match?.editable,
       }
     })
 
@@ -73,5 +116,10 @@ export const useWorkerData = () => {
     workplacesForSetting,
     getWorkerData,
     getWorkerWorkplaces,
+    updateWorkplaceEditable,
+    updateWorkplaceEnabled,
+    notUpdateWorkplace,
+    doUpdateWorkplace,
+    updateMode,
   }
 }

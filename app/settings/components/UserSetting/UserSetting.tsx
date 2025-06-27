@@ -1,14 +1,11 @@
-import { Worker } from '@/app/types/Worker'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useUpdateUserData } from '../../hooks/useUpdateUserData'
 import ModalInput from '../Dialog/ModalInput'
 import ModalColorPicker from '../Dialog/ModalColorPicker'
 import { getContrastTextColor } from '@/app/utils/colorsUtils'
-import { useMainStore } from '@/app/stores/useMainStore'
 import { useRouter } from 'next/navigation'
 import { useWorkerData } from '@/app/hooks/useWorkerData'
-import { useGetData } from '../../hooks/useGetData'
 
 interface UserSettingProps {
   workerId: string
@@ -20,10 +17,17 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
   const [nameInput, setNameInput] = useState('')
   const { updateColor, updateName } = useUpdateUserData()
   const [loading, setLoading] = useState(false)
-  const { worker, workplacesForSetting, getWorkerWorkplaces, getWorkerData } =
-    useWorkerData()
-  const [checked1, setChecked1] = useState<boolean>(false)
-  const [checked2, setChecked2] = useState<boolean>(false)
+  const {
+    worker,
+    workplacesForSetting,
+    getWorkerWorkplaces,
+    getWorkerData,
+    updateWorkplaceEditable,
+    updateWorkplaceEnabled,
+    notUpdateWorkplace,
+    doUpdateWorkplace,
+    updateMode,
+  } = useWorkerData()
   const router = useRouter()
 
   useEffect(() => {
@@ -37,12 +41,12 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
     }
   }, [worker])
 
-  const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked1(event.target.checked)
+  const handleWorkplaceEditable = (id: string, editable: number) => {
+    updateWorkplaceEditable(id, editable)
   }
 
-  const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked2(event.target.checked)
+  const handleWorkplaceEnabled = (id: string, enabled: boolean) => {
+    updateWorkplaceEnabled(id, enabled)
   }
 
   const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,6 +154,7 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
           <div className="ms-4 text-xl font-semibold">Настройки</div>
         </div>
       </div>
+      <div className="ms-2">Профиль</div>
       <div className="flex flex-col text-white">
         <div
           onClick={() => {
@@ -186,47 +191,92 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
             <div className=" text-white">{' >'}</div>
           </div>
         </div>
-        {workplacesForSetting.length > 0 &&
-          workplacesForSetting.map((workplace) => (
-            <div
-              key={'workplace_' + workplace.id}
-              className="mt-1 mx-2 py-2 px-2 bg-[#2B7FFF] rounded-[6px] text-white flex flex-col"
-            >
-              <div className="flex flex-row items-center justify-between">
-                <div>{workplace.name}</div>
-                <input
-                  className="size-8"
-                  type="checkbox"
-                  checked={workplace.enabled}
-                  onChange={handleChange1}
-                />
-              </div>
-              {workplace.enabled && (
-                <div className="bg-white mt-1">
+        {worker?.access_id === 1 && (
+          <div>
+            <div className="ms-2 text-black">Назначения</div>
+            {workplacesForSetting.length > 0 &&
+              workplacesForSetting.map((workplace) => (
+                <div
+                  key={'workplace_' + workplace.id}
+                  className="mt-1 mx-2 py-2 px-2 bg-[#2B7FFF] rounded-[6px] text-white flex flex-col"
+                >
                   <div className="flex flex-row items-center justify-between">
-                    <div
-                      className="py-1 flex-1 border-2 border-white flex justify-center"
-                      style={{
-                        background: !workplace.editable ? '#2B7FFF' : 'white',
-                        color: !workplace.editable ? 'white' : 'black',
+                    <div>{workplace.name}</div>
+                    <input
+                      className="size-8"
+                      type="checkbox"
+                      checked={workplace.enabled}
+                      onChange={(e) => {
+                        handleWorkplaceEnabled(workplace.id, e.target.checked)
                       }}
-                    >
-                      Чтение
-                    </div>
-                    <div
-                      className="py-1 flex-1 border-2 border-white flex justify-center"
-                      style={{
-                        background: workplace.editable ? '#2B7FFF' : 'white',
-                        color: workplace.editable ? 'white' : 'black',
-                      }}
-                    >
-                      Запись
-                    </div>
+                    />
                   </div>
+                  {workplace.enabled && (
+                    <div className="bg-white mt-1">
+                      <div className="flex flex-row items-center justify-between">
+                        <div
+                          className="py-1 flex-1 border-2 border-white flex justify-center"
+                          style={{
+                            background: !workplace.editable
+                              ? '#2B7FFF'
+                              : 'white',
+                            color: !workplace.editable ? 'white' : 'black',
+                          }}
+                          onClick={() => {
+                            handleWorkplaceEditable(workplace.id, 0)
+                          }}
+                        >
+                          Чтение
+                        </div>
+                        <div
+                          className="py-1 flex-1 border-2 border-white flex justify-center"
+                          style={{
+                            background: workplace.editable
+                              ? '#2B7FFF'
+                              : 'white',
+                            color: workplace.editable ? 'white' : 'black',
+                          }}
+                          onClick={() => {
+                            handleWorkplaceEditable(workplace.id, 1)
+                          }}
+                        >
+                          Запись
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+              ))}
+            {updateMode && (
+              <div className="grid grid-cols-2 gap-2 mt-1 mx-2">
+                <button
+                  onClick={() => {
+                    notUpdateWorkplace()
+                  }}
+                  style={{
+                    background: loading ? 'gray' : '#EF4444',
+                  }}
+                  disabled={loading}
+                  className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={() => {
+                    doUpdateWorkplace()
+                  }}
+                  style={{
+                    background: loading ? 'gray' : '#12C739',
+                  }}
+                  disabled={loading}
+                  className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
+                >
+                  Сохранить
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </>
   )

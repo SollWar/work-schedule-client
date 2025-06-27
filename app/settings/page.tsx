@@ -10,7 +10,7 @@ const accessType = ['Обычный', 'Админ']
 const SettingsPage = () => {
   const { getWorkers, getWorkplaces, workers, workplaces } = useGetData()
   const { mainData } = useMainStore()
-  const [accessId] = useState(1)
+  const [accessId, setAccessId] = useState(0)
   const [workersListOpen, setWorkersListOpen] = useState(false)
   const [workplacesListOpen, setWorkplacesListOpen] = useState(false)
   const router = useRouter()
@@ -18,6 +18,8 @@ const SettingsPage = () => {
   useEffect(() => {
     if (!mainData) {
       router.replace('/')
+    } else {
+      setAccessId(mainData.user.access_id)
     }
   }, [])
 
@@ -25,7 +27,8 @@ const SettingsPage = () => {
     <div>
       <UserSetting workerId={mainData?.user.id!} />
       {accessId === 1 && (
-        <>
+        <div className="mb-2">
+          <div className="ms-2 mt-1 text-black">Админка</div>
           <div
             onClick={() => {
               if (!workersListOpen) {
@@ -34,7 +37,7 @@ const SettingsPage = () => {
               setWorkersListOpen(!workersListOpen)
             }}
             className={
-              'mx-2 mt-2 py-3 px-2 flex flex-row items-center justify-between rounded-[6px] cursor-pointer ' +
+              'mx-2 mt-1 py-3 px-2 flex flex-row items-center justify-between rounded-[6px] cursor-pointer ' +
               (accessId === 1 ? 'bg-[#2B7FFF]' : 'bg-[#747475]')
             }
           >
@@ -97,7 +100,7 @@ const SettingsPage = () => {
               </div>
             ))}
           </div>
-        </>
+        </div>
       )}
     </div>
   )
