@@ -93,12 +93,24 @@ const SettingsPage = () => {
           >
             {workplaces.map((workplace) => (
               <div
+                onClick={() => {
+                  router.push(`/workplace?id=${workplace.id}`)
+                }}
                 key={workplace.id}
                 className="mt-1 ms-4 py-2 px-2 bg-[#2B7FFF] rounded-[6px] text-white"
               >
                 <div>{workplace.name}</div>
               </div>
             ))}
+            <div
+              onClick={() => {
+                router.push(`/workplace?id=${'new'}`)
+              }}
+              key={'workplace new'}
+              className="mt-1 ms-4 py-2 px-1 bg-white border-2 border-[#2B7FFF] rounded-[6px] text-black"
+            >
+              <div>Новый магазин</div>
+            </div>
           </div>
         </div>
       )}
