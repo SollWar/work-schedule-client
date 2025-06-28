@@ -14,10 +14,12 @@ interface WorkplaceSettingProps {
 const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
   const { workplace, getWorkplaceData } = useWorkplaceData()
   const [nameModalOpen, setNameModalOpen] = useState(false)
+  const [color, setColor] = useState('#0070F3')
+  const [name, setName] = useState('Магазин')
   const [colorPickerModalOpen, setColorPickerModalOpen] = useState(false)
   const [nameInput, setNameInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const { updateName, updateColor } = useUpdateWorkplaceData()
+  const { updateName, updateColor, createWorkplace } = useUpdateWorkplaceData()
   const router = useRouter()
 
   useEffect(() => {
@@ -29,6 +31,10 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
   useEffect(() => {
     if (workplace) {
       setNameInput(workplace.name)
+      setName(workplace.name)
+      setColor(workplace.color)
+    } else {
+      setNameInput('Магазин')
     }
   }, [workplace])
 
@@ -37,22 +43,35 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
   }
 
   const handleColorUpdate = async (color: string) => {
+    setColor(color)
     if (workplace) {
       setLoading(true)
       await updateColor(color, workplace.id)
       await getWorkplaceData(workplace.id)
       setLoading(true)
       setColorPickerModalOpen(false)
+    } else {
+      setColorPickerModalOpen(false)
     }
   }
 
   const handleNameUpdate = async (name: string) => {
+    setName(name)
     if (workplace) {
       setLoading(true)
       await updateName(name, workplace.id)
       await getWorkplaceData(workplace.id)
       setNameModalOpen(false)
       setLoading(false)
+    } else {
+      setNameModalOpen(false)
+    }
+  }
+
+  const createNewWorplace = async (name: string, color: string) => {
+    if (name !== '' && color !== '') {
+      await createWorkplace(name, color)
+      router.back()
     }
   }
 
@@ -112,12 +131,12 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
           onClose={() => {
             setColorPickerModalOpen(false)
           }}
-          userName={workplace?.name ?? 'null'}
-          initColor={workplace?.color ?? '#2B7FFF'}
+          userName={name}
+          initColor={color}
           selectColor={handleColorUpdate}
         />
       </ModalInput>
-      <div className="h-14 bg-white flex justify-between my-1 p-1">
+      <div className="h-12 bg-white flex justify-between my-1 p-1">
         <div className="flex flex-row items-center">
           <button
             onClick={() => {
@@ -147,9 +166,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
         >
           <div className=" ">Отображаемое имя</div>
           <div className="flex flex-row h-full items-center text-white">
-            <div className="me-2 flex items-center justify-center">
-              {workplace?.name ?? 'null'}
-            </div>
+            <div className="me-2 flex items-center justify-center">{name}</div>
             <div className=" ">{' >'}</div>
           </div>
         </div>
@@ -163,8 +180,8 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
           <div className="flex flex-row h-full items-center">
             <div
               style={{
-                background: workplace?.color ?? '#0070F3',
-                color: getContrastTextColor(workplace?.color ?? '#0070F3'),
+                background: color,
+                color: getContrastTextColor(color),
               }}
               className="h-[90%] aspect-square me-2 flex items-center justify-center border-2 border-white rounded-[6px]"
             >
@@ -174,6 +191,36 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
           </div>
         </div>{' '}
       </div>
+      {workplaceId === 'new' ? (
+        <div className="grid grid-cols-2 gap-2 mt-1 mx-2">
+          <button
+            onClick={() => {
+              router.back()
+            }}
+            style={{
+              background: loading ? 'gray' : '#EF4444',
+            }}
+            disabled={loading}
+            className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
+          >
+            Отмена
+          </button>
+          <button
+            onClick={() => {
+              createNewWorplace(name, color)
+            }}
+            style={{
+              background: loading ? 'gray' : '#12C739',
+            }}
+            disabled={loading}
+            className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
+          >
+            Сохранить
+          </button>
+        </div>
+      ) : (
+        ''
+      )}
     </>
   )
 }

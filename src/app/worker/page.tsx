@@ -1,16 +1,13 @@
 'use client'
-import { useSearchParams } from 'next/navigation'
-import UserSetting from '../settings/components/UserSetting/UserSetting'
+import { Suspense } from 'react'
+import WorkerComponent from './WorkerComponent'
 
 const WorkerPage = () => {
-  const searchParams = useSearchParams()
-  const workerId = searchParams.get('id')
-
-  if (workerId) {
-    return <UserSetting workerId={workerId} />
-  } else {
-    return <div>Загрузка...</div>
-  }
+  return (
+    <Suspense fallback={<div>Загрузка...</div>}>
+      <WorkerComponent />
+    </Suspense>
+  )
 }
 
 export default WorkerPage

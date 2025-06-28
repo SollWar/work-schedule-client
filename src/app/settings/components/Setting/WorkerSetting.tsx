@@ -1,11 +1,12 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import { useUpdateUserData } from '../../hooks/useUpdateUserData'
+import { useUpdateWorkerData } from '../../hooks/useUpdateWorkerData'
 import ModalInput from '../Dialog/ModalInput'
 import ModalColorPicker from '../Dialog/ModalColorPicker'
 import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { useRouter } from 'next/navigation'
 import { useWorkerData } from '@/src/hooks/useWorkerData'
+import { useMainStore } from '@/src/stores/useMainStore'
 
 interface UserSettingProps {
   workerId: string
@@ -13,33 +14,51 @@ interface UserSettingProps {
 
 const UserSetting = ({ workerId }: UserSettingProps) => {
   const [nameModalOpen, setNameModalOpen] = useState(false)
+  const [telegramIdModalOpen, setTelegramIdModalOpen] = useState(false)
+  const [name, setName] = useState('Работник')
+  const [telegramId, setTelegramId] = useState('')
+  const [color, setColor] = useState('#0070F3')
   const [colorPickerModalOpen, setColorPickerModalOpen] = useState(false)
+  const { mainData } = useMainStore()
   const [nameInput, setNameInput] = useState('')
-  const { updateColor, updateName } = useUpdateUserData()
+  const [telegraIdInput, setTelegramIdInput] = useState('')
+  const { updateColor, updateName, createWorker, deleteWorker } =
+    useUpdateWorkerData()
   const [loading, setLoading] = useState(false)
   const {
     worker,
     workplacesForSetting,
+    updateMode,
     getWorkerWorkplaces,
     getWorkerData,
     updateWorkplaceEditable,
     updateWorkplaceEnabled,
     notUpdateWorkplace,
     doUpdateWorkplace,
-    updateMode,
   } = useWorkerData()
   const router = useRouter()
 
   useEffect(() => {
-    getWorkerData(workerId)
-    getWorkerWorkplaces(workerId)
+    if (workerId !== 'new') {
+      getWorkerData(workerId)
+      getWorkerWorkplaces(workerId)
+    }
   }, [])
 
   useEffect(() => {
     if (worker) {
       setNameInput(worker.name)
+      setName(worker.name)
+      setColor(worker.color)
+    } else {
+      setNameInput('Работник')
     }
   }, [worker])
+
+  const handleDeleteWorker = async (workerId: string) => {
+    await deleteWorker(workerId)
+    router.back()
+  }
 
   const handleWorkplaceEditable = (id: string, editable: number) => {
     updateWorkplaceEditable(id, editable)
@@ -53,23 +72,54 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
     setNameInput(e.target.value)
   }
 
+  const handleTelegramIdInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setTelegramIdInput(e.target.value)
+  }
+
   const handleColorUpdate = async (color: string) => {
+    setColor(color)
     if (worker) {
       setLoading(true)
       await updateColor(color, worker.id)
       await getWorkerData(worker.id)
       setLoading(true)
       setColorPickerModalOpen(false)
+    } else {
+      setColorPickerModalOpen(false)
     }
   }
 
   const handleNameUpdate = async (name: string) => {
+    setName(name)
     if (worker) {
       setLoading(true)
       await updateName(name, worker.id)
       await getWorkerData(worker.id)
       setNameModalOpen(false)
       setLoading(false)
+    } else {
+      setNameModalOpen(false)
+    }
+  }
+  const handleTelegramIdUpdate = async (telegramId: string) => {
+    setTelegramId(telegramId)
+    if (worker) {
+    } else {
+      setTelegramIdModalOpen(false)
+    }
+  }
+
+  const handleCreateWorker = async (
+    name: string,
+    color: string,
+    telegramId: string
+  ) => {
+    console.log(name, color, telegramId)
+    if (name !== '' && color !== '' && telegramId !== '') {
+      await createWorker(name, color, '0', telegramId)
+      router.back()
     }
   }
 
@@ -120,6 +170,49 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
       </ModalInput>
       <ModalInput
         onClose={() => {
+          setTelegramIdModalOpen(false)
+        }}
+        closeButton={false}
+        isOpen={telegramIdModalOpen}
+      >
+        <div className="mb-2">Введите TelegramID</div>
+        <div className="flex items-center justify-center mb-4">
+          <input
+            type="text"
+            value={telegraIdInput}
+            onChange={handleTelegramIdInputChange}
+            className="py-2 px-4 w-full border-1 border-[#2B7FFF] rounded-[6px]"
+          ></input>
+        </div>
+        <div className="grid grid-cols-2 gap-2 mt-1">
+          <button
+            onClick={() => {
+              setTelegramIdModalOpen(false)
+            }}
+            style={{
+              background: loading ? 'gray' : '#EF4444',
+            }}
+            disabled={loading}
+            className="flex text-white items-center justify-center text-xl p-2 rounded-[6px]"
+          >
+            Отмена
+          </button>
+          <button
+            onClick={() => {
+              handleTelegramIdUpdate(telegraIdInput)
+            }}
+            style={{
+              background: loading ? 'gray' : '#12C739',
+            }}
+            disabled={loading}
+            className="flex text-white items-center justify-center text-xl p-2 rounded-[6px]"
+          >
+            Сохранить
+          </button>
+        </div>
+      </ModalInput>
+      <ModalInput
+        onClose={() => {
           setColorPickerModalOpen(false)
         }}
         closeButton={false}
@@ -129,13 +222,13 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
           onClose={() => {
             setColorPickerModalOpen(false)
           }}
-          userName={worker?.name ?? 'null'}
-          initColor={worker?.color ?? '#2B7FFF'}
+          userName={name}
+          initColor={color}
           selectColor={handleColorUpdate}
         />
       </ModalInput>
-      <div className="h-14 bg-white flex justify-between my-1 p-1">
-        <div className="flex flex-row items-center">
+      <div className="h-12 bg-white flex  my-1 p-1">
+        <div className="flex w-full flex-row items-center">
           <button
             onClick={() => {
               router.back()
@@ -151,7 +244,27 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
             />
           </button>
 
-          <div className="ms-4 text-xl font-semibold">Настройки</div>
+          <div className="flex flex-row justify-between w-full">
+            <div className="ms-4 text-xl font-semibold">Настройки</div>
+            {worker?.id === mainData?.user.id ? (
+              <div></div>
+            ) : (
+              <button
+                onClick={() => {
+                  handleDeleteWorker(workerId)
+                }}
+                className="bg-[white] px-4 h-full flex items-center rounded-[6px]"
+              >
+                <Image
+                  src="/trash.svg"
+                  alt="Удалить"
+                  width={24}
+                  height={24}
+                  priority={true}
+                />
+              </button>
+            )}
+          </div>
         </div>
       </div>
       <div className="ms-2">Профиль</div>
@@ -164,9 +277,7 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
         >
           <div className=" ">Отображаемое имя</div>
           <div className="flex flex-row h-full items-center text-white">
-            <div className="me-2 flex items-center justify-center">
-              {worker?.name ?? 'null'}
-            </div>
+            <div className="me-2 flex items-center justify-center">{name}</div>
             <div className=" ">{' >'}</div>
           </div>
         </div>
@@ -181,8 +292,8 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
           <div className="flex flex-row h-full items-center">
             <div
               style={{
-                background: worker?.color ?? '#0070F3',
-                color: getContrastTextColor(worker?.color ?? '#0070F3'),
+                background: color,
+                color: getContrastTextColor(color),
               }}
               className="h-[90%] aspect-square me-2 flex items-center justify-center border-2 border-white rounded-[6px]"
             >
@@ -191,7 +302,21 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
             <div className=" text-white">{' >'}</div>
           </div>
         </div>
-        {worker?.access_id === 1 && (
+        <div
+          onClick={() => {
+            setTelegramIdModalOpen(true)
+          }}
+          className="mx-2 mt-1 py-3 px-2 flex flex-row items-center justify-between  bg-[#2B7FFF] rounded-[6px]"
+        >
+          <div className=" ">TelegramID</div>
+          <div className="flex flex-row h-full items-center text-white">
+            <div className="me-2 flex items-center justify-center">
+              {telegramId}
+            </div>
+            <div className=" ">{' >'}</div>
+          </div>
+        </div>
+        {mainData?.user.access_id === 1 && workerId !== 'new' && (
           <div>
             <div className="ms-2 text-black">Назначения</div>
             {workplacesForSetting.length > 0 &&
@@ -276,6 +401,36 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
               </div>
             )}
           </div>
+        )}
+        {workerId === 'new' ? (
+          <div className="grid grid-cols-2 gap-2 mt-1 mx-2">
+            <button
+              onClick={() => {
+                router.back()
+              }}
+              style={{
+                background: loading ? 'gray' : '#EF4444',
+              }}
+              disabled={loading}
+              className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
+            >
+              Отмена
+            </button>
+            <button
+              onClick={() => {
+                handleCreateWorker(name, color, telegramId)
+              }}
+              style={{
+                background: loading ? 'gray' : '#12C739',
+              }}
+              disabled={loading}
+              className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
+            >
+              Сохранить
+            </button>
+          </div>
+        ) : (
+          ''
         )}
       </div>
     </>

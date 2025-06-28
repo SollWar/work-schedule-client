@@ -4,11 +4,11 @@ import fetchTyped from '../utils/fetchTyped'
 import { useMainStore } from '../stores/useMainStore'
 import { Workplace, WorkplaceForSetting } from '../types/Workplace'
 import { useGetData } from '../app/settings/hooks/useGetData'
-import { useUpdateUserData } from '../app/settings/hooks/useUpdateUserData'
+import { useUpdateWorkerData } from '../app/settings/hooks/useUpdateWorkerData'
 
 export const useWorkerData = () => {
   const [worker, setWorker] = useState<Worker>()
-  const { updateWorkplace } = useUpdateUserData()
+  const { updateWorkplace } = useUpdateWorkerData()
   const [workplaces, setWorkplaces] = useState<Workplace[]>([])
   const { mainData, reloadMainStore } = useMainStore()
   const [updateMode, setUpdateMode] = useState(false)
@@ -22,7 +22,7 @@ export const useWorkerData = () => {
   >([])
 
   useEffect(() => {
-    if (allWorkplaces.length > 0 && workplaces.length > 0) {
+    if (allWorkplaces.length > 0) {
       generateWorkplacesForSetting()
     }
   }, [allWorkplaces, workplaces])
@@ -107,7 +107,6 @@ export const useWorkerData = () => {
         method: 'GET',
       }
     )
-
     setWorkplaces(response)
   }
 

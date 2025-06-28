@@ -3,9 +3,9 @@ import { useRouter } from 'next/navigation'
 import { useMainStore } from '../../stores/useMainStore'
 import { useEffect, useState } from 'react'
 import { useGetData } from './hooks/useGetData'
-import UserSetting from './components/UserSetting/UserSetting'
+import UserSetting from './components/Setting/WorkerSetting'
 
-const accessType = ['Обычный', 'Админ']
+//const accessType = ['Обычный', 'Админ']
 
 const SettingsPage = () => {
   const { getWorkers, getWorkplaces, workers, workplaces } = useGetData()
@@ -25,7 +25,7 @@ const SettingsPage = () => {
 
   return (
     <div>
-      <UserSetting workerId={mainData?.user.id!} />
+      <UserSetting workerId={mainData?.user.id ?? 'new'} />
       {accessId === 1 && (
         <div className="mb-2">
           <div className="ms-2 mt-1 text-black">Админка</div>
@@ -50,9 +50,12 @@ const SettingsPage = () => {
           </div>
 
           <div
-            className={`mx-2 overflow-hidden transition-all duration-300 ease-in-out ${
-              workersListOpen ? 'max-h-40' : 'max-h-0'
-            }`}
+            className={`mx-2 overflow-hidden transition-all duration-300 ease-in-out`}
+            style={{
+              maxHeight: workersListOpen
+                ? `${workers.length * 3 + 3}rem`
+                : '0rem',
+            }}
           >
             {workers.map((worker) => (
               <div
@@ -65,6 +68,15 @@ const SettingsPage = () => {
                 <div>{worker.name}</div>
               </div>
             ))}
+            <div
+              onClick={() => {
+                router.push(`/worker?id=${'new'}`)
+              }}
+              key={'workplace new'}
+              className="mt-1 ms-4 py-2 px-1 bg-white border-2 border-[#2B7FFF] rounded-[6px] text-black"
+            >
+              <div>Новый работник</div>
+            </div>
           </div>
           <div
             onClick={() => {
@@ -87,9 +99,12 @@ const SettingsPage = () => {
           </div>
 
           <div
-            className={`mx-2 overflow-hidden transition-all duration-300 ease-in-out ${
-              workplacesListOpen ? 'max-h-40' : 'max-h-0'
-            }`}
+            className={`mx-2 overflow-hidden transition-all duration-300 ease-in-out`}
+            style={{
+              maxHeight: workplacesListOpen
+                ? `${workplaces.length * 3 + 3}rem`
+                : '0rem',
+            }}
           >
             {workplaces.map((workplace) => (
               <div

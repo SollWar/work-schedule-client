@@ -1,7 +1,46 @@
 import { WorkplaceForSetting } from '@/src/types/Workplace'
 import fetchTyped from '@/src/utils/fetchTyped'
 
-export const useUpdateUserData = () => {
+export const useUpdateWorkerData = () => {
+  const deleteWorker = async (workerId: string) => {
+    const response = await fetchTyped<boolean>(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/delete`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: workerId,
+        }),
+      }
+    )
+    return response
+  }
+  const createWorker = async (
+    name: string,
+    color: string,
+    access_id: string,
+    telegram_id: string
+  ): Promise<boolean> => {
+    const response = await fetchTyped<boolean>(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/create`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name,
+          color: color,
+          access_id: access_id,
+          telegram_id: telegram_id,
+        }),
+      }
+    )
+    return response
+  }
+
   const updateWorkplace = async (
     workerId: string,
     workplaces: WorkplaceForSetting[]
@@ -61,5 +100,11 @@ export const useUpdateUserData = () => {
     console.log(response)
     return response
   }
-  return { updateColor, updateName, updateWorkplace }
+  return {
+    updateColor,
+    updateName,
+    updateWorkplace,
+    createWorker,
+    deleteWorker,
+  }
 }

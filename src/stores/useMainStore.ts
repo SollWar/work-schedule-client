@@ -10,7 +10,7 @@ interface MainStoreState {
   reloadMainStore: () => Promise<void>
 }
 
-export const useMainStore = create<MainStoreState>((set, get) => ({
+export const useMainStore = create<MainStoreState>((set) => ({
   mainData: null,
   telegramId: null,
   setTelegramId(telegramId) {

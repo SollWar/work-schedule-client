@@ -12,7 +12,7 @@ export const TopBar = () => {
   const { currentYear } = useDateStore()
 
   return (
-    <div className="h-14 bg-white flex justify-between my-1 p-1">
+    <div className="h-12 bg-white flex justify-between my-1 p-1">
       <div className="flex flex-row items-center">
         <button
           className="px-4 h-full flex items-center rounded-[6px]"
