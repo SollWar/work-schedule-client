@@ -8,11 +8,11 @@ import { useRouter } from 'next/navigation'
 import { useWorkerData } from '@/src/hooks/useWorkerData'
 import { useMainStore } from '@/src/stores/useMainStore'
 
-interface UserSettingProps {
+interface WorkerSettingProps {
   workerId: string
 }
 
-const UserSetting = ({ workerId }: UserSettingProps) => {
+const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
   const [nameModalOpen, setNameModalOpen] = useState(false)
   const [telegramIdModalOpen, setTelegramIdModalOpen] = useState(false)
   const [name, setName] = useState('Работник')
@@ -437,4 +437,4 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
   )
 }
 
-export default UserSetting
+export default WorkerSetting

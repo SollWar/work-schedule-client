@@ -9,11 +9,9 @@ import { useDateStore } from '@/src/stores/useDateStore'
 
 export const PlaceDropDown = () => {
   const { mainData } = useMainStore()
-  const { getSchedule, type } = useScheduleStore()
+  const { getSchedule, type, schedule_id } = useScheduleStore()
   const { year, month } = useDateStore()
-  const [selected, setSelected] = useState<Worker | Workplace>(
-    mainData!.availableWorkers[0]
-  )
+  const [selected, setSelected] = useState<Worker | Workplace>(mainData?.user!)
   const initialValues = useRef({ type, mainData, year, month })
 
   const selectWork = (type: 'worker' | 'workplace', id: string) => {
@@ -23,8 +21,8 @@ export const PlaceDropDown = () => {
   //TODO(После экрана настроек неверное отображение. Дима->М7->Настройки->Назад)
   useEffect(() => {
     getSchedule(
-      initialValues.current.type,
-      initialValues.current.mainData!.user.id,
+      'worker',
+      initialValues.current.mainData?.user.id!,
       initialValues.current.year,
       initialValues.current.month
     )

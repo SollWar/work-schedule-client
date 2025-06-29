@@ -35,7 +35,9 @@ export const Calendar = () => {
   )
   const entitiesForDropDown = useMemo(
     () =>
-      type === 'workplace'
+      mainData?.user.access_id === 1
+        ? entities
+        : type === 'workplace'
         ? entities
         : entities.filter((worker) => worker.editable === 1),
     [entities, type]
@@ -101,7 +103,7 @@ export const Calendar = () => {
         style={{ backgroundColor, color: textColor }}
       >
         <CalendarDropDown
-          enabled={enabled}
+          enabled={mainData?.user.access_id === 1 ? true : enabled}
           day={ind}
           onSelectChange={handleDayChange}
           items={entitiesForDropDown}

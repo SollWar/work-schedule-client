@@ -1,9 +1,10 @@
 'use client'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useMainStore } from '../../stores/useMainStore'
 import { useEffect, useState } from 'react'
 import { useGetData } from './hooks/useGetData'
-import UserSetting from './components/Setting/WorkerSetting'
+import WorkerSetting from './components/Setting/WorkerSetting'
 
 //const accessType = ['Обычный', 'Админ']
 
@@ -11,24 +12,48 @@ const SettingsPage = () => {
   const { getWorkers, getWorkplaces, workers, workplaces } = useGetData()
   const { mainData } = useMainStore()
   const [accessId, setAccessId] = useState(0)
-  const [workersListOpen, setWorkersListOpen] = useState(false)
-  const [workplacesListOpen, setWorkplacesListOpen] = useState(false)
+  const [workersListOpen, setWorkersListOpen] = useState(true)
+  const [workplacesListOpen, setWorkplacesListOpen] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
     if (!mainData) {
       router.replace('/')
     } else {
+      if (mainData.user.access_id !== 1) {
+        router.replace(`/worker?id=${mainData.user.id}`)
+      }
       setAccessId(mainData.user.access_id)
+      getWorkers()
+      getWorkplaces()
     }
   }, [])
 
   return (
     <div>
-      <UserSetting workerId={mainData?.user.id ?? 'new'} />
+      <div className="h-12 bg-white flex  my-1 p-1">
+        <div className="flex w-full flex-row items-center">
+          <button
+            onClick={() => {
+              router.back()
+            }}
+            className="bg-[#2B7FFF] px-4 h-full flex items-center rounded-[6px]"
+          >
+            <Image
+              src="/arrow_back.svg"
+              alt="Назад"
+              width={24}
+              height={24}
+              priority={true}
+            />
+          </button>
+
+          <div className="ms-4 text-xl font-semibold">Настройки</div>
+        </div>
+      </div>
       {accessId === 1 && (
         <div className="mb-2">
-          <div className="ms-2 mt-1 text-black">Админка</div>
+          {/* <div className="ms-2 mt-1 text-black">Админка</div> */}
           <div
             onClick={() => {
               if (!workersListOpen) {
