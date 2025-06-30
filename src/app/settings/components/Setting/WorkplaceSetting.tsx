@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { useWorkplaceData } from '@/src/hooks/useWorkplaceData'
 import { useEffect, useState } from 'react'
 import ModalInput from '../Dialog/ModalInput'
@@ -141,13 +140,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
           }}
           className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start"
         >
-          <Image
-            src="/arrow_back.svg"
-            alt="Назад"
-            width={24}
-            height={24}
-            priority={true}
-          />
+          <img src="/arrow_back.svg" alt="Назад" width={24} height={24} />
         </button>
 
         <div className="ms-4 text-xl w-fit font-semibold justify-self-center">
@@ -160,13 +153,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
           }}
           className="bg-white px-4 h-full w-fit rounded-[6px] justify-self-end"
         >
-          <Image
-            src="/trash.svg"
-            alt="Удалить"
-            width={24}
-            height={24}
-            priority={true}
-          />
+          <img src="/trash.svg" alt="Удалить" width={24} height={24} />
         </button>
       </div>
 

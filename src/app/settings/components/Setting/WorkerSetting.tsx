@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useUpdateWorkerData } from '../../hooks/useUpdateWorkerData'
 import ModalInput from '../Dialog/ModalInput'
@@ -234,13 +233,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
           }}
           className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start"
         >
-          <Image
-            src="/arrow_back.svg"
-            alt="Назад"
-            width={24}
-            height={24}
-            priority={true}
-          />
+          <img src="/arrow_back.svg" alt="Назад" width={24} height={24} />
         </button>
 
         <div className="ms-4 text-xl w-fit font-semibold justify-self-center">
@@ -255,13 +248,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
             }}
             className="bg-white px-4 h-full w-fit rounded-[6px] justify-self-end"
           >
-            <Image
-              src="/trash.svg"
-              alt="Удалить"
-              width={24}
-              height={24}
-              priority={true}
-            />
+            <img src="/trash.svg" alt="Удалить" width={24} height={24} />
           </button>
         )}
       </div>
@@ -275,13 +262,12 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
           <div className=" ">Отображаемое имя</div>
           <div className="flex flex-row h-full items-center text-white">
             {name === '' ? (
-              <Image
+              <img
                 className="me-2"
                 src="/dot_loader.svg"
                 alt="Загрузка"
                 width={56}
                 height={36}
-                priority={true}
               />
             ) : (
               <div className="me-2 flex items-center justify-center">
@@ -311,13 +297,12 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
                 27
               </div>
             ) : (
-              <Image
+              <img
                 className="me-2"
                 src="/dot_loader.svg"
                 alt="Загрузка"
                 width={56}
                 height={36}
-                priority={true}
               />
             )}
 
@@ -337,13 +322,12 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
                 {telegramId}
               </div>
             ) : (
-              <Image
+              <img
                 className="me-2"
                 src="/dot_loader.svg"
                 alt="Загрузка"
                 width={56}
                 height={36}
-                priority={true}
               />
             )}
 

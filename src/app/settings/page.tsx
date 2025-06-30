@@ -1,10 +1,8 @@
 'use client'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useMainStore } from '../../stores/useMainStore'
 import { useEffect, useState } from 'react'
 import { useGetData } from './hooks/useGetData'
-import WorkerSetting from './components/Setting/WorkerSetting'
 
 //const accessType = ['Обычный', 'Админ']
 
@@ -38,13 +36,7 @@ const SettingsPage = () => {
           }}
           className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start"
         >
-          <Image
-            src="/arrow_back.svg"
-            alt="Назад"
-            width={24}
-            height={24}
-            priority={true}
-          />
+          <img src="/arrow_back.svg" alt="Назад" width={24} height={24} />
         </button>
 
         <div className="ms-4 text-xl w-fit font-semibold justify-self-center">

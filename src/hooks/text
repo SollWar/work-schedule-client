@@ -1,5 +1,4 @@
 // src/app/settings/components/Setting/WorkerSetting.tsx
-import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useUpdateWorkerData } from '../../hooks/useUpdateWorkerData'
 import ModalInput from '../Dialog/ModalInput'
@@ -239,12 +238,11 @@ const UserSetting = ({ workerId }: UserSettingProps) => {
             className="bg-[#2B7FFF] px-4 h-full flex items-center rounded-md"
             aria-label="Назад"
           >
-            <Image
+            <img
               src="/arrow_back.svg"
               alt="Назад"
               width={24}
               height={24}
-              priority
             />
           </button>
           <div className="ms-4 text-xl font-semibold">Настройки</div>

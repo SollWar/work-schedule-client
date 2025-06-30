@@ -1,0 +1,7 @@
+services:
+  new-schedule:
+    image: new-schedule
+    container_name: new-schedule
+    ports:
+      - "80:80"
+    restart: unless-stopped

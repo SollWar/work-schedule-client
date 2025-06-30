@@ -1,11 +1,10 @@
 export default async function fetchTyped<T>(
   url: string,
-  options: RequestInit = {},
-  withCredentials: boolean = true
+  options: RequestInit = {}
 ): Promise<T> {
   const fetchOptions: RequestInit = {
     ...options,
-    credentials: withCredentials ? 'include' : 'omit',
+    credentials: 'include',
   }
 
   const res = await fetch(url, fetchOptions)

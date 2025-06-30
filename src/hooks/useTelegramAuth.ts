@@ -6,19 +6,19 @@ export const useTelegramAuth = () => {
   const [telegramId, setTelegramId] = useState('')
 
   useEffect(() => {
-    setTelegramInitData('924296919')
-    // const importWebApp = async () => {
-    //   const { default: WebApp } = await import('@twa-dev/sdk')
+    //setTelegramInitData('924296919')
+    const importWebApp = async () => {
+      const { default: WebApp } = await import('@twa-dev/sdk')
 
-    //   WebApp.ready()
-    //   WebApp.expand()
+      WebApp.ready()
+      WebApp.expand()
 
-    //   setTelegramInitData(WebApp.initData)
-    // }
+      setTelegramInitData(WebApp.initData)
+    }
 
-    // if (typeof window !== 'undefined') {
-    //   importWebApp()
-    // }
+    if (typeof window !== 'undefined') {
+      importWebApp()
+    }
   }, [])
 
   useEffect(() => {
@@ -28,12 +28,25 @@ export const useTelegramAuth = () => {
   }, [telegramInitData])
 
   const telegramAuth = async () => {
-    const result = await fetchTyped<string>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/login/telegram/?initData=${telegramInitData}`
-    )
+    try {
+      const result = await fetchTyped<string>(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/login/telegram`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            initData: telegramInitData,
+          }),
+        }
+      )
 
-    setTelegramId(result)
+      setTelegramId(result)
+    } catch (e) {
+      console.log(e)
+    }
   }
 
-  return { telegramId }
+  return { telegramId, telegramInitData }
 }

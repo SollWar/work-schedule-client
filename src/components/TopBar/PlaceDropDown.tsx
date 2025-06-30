@@ -9,9 +9,11 @@ import { useDateStore } from '@/src/stores/useDateStore'
 
 export const PlaceDropDown = () => {
   const { mainData } = useMainStore()
-  const { getSchedule, type, schedule_id } = useScheduleStore()
+  const { getSchedule, type, schedule_id, entities } = useScheduleStore()
   const { year, month } = useDateStore()
-  const [selected, setSelected] = useState<Worker | Workplace>(mainData?.user!)
+  const [selected, setSelected] = useState<Worker | Workplace>(
+    mainData?.user ?? entities[0]
+  )
   const initialValues = useRef({ type, mainData, year, month })
 
   const selectWork = (type: 'worker' | 'workplace', id: string) => {
@@ -22,7 +24,7 @@ export const PlaceDropDown = () => {
   useEffect(() => {
     getSchedule(
       'worker',
-      initialValues.current.mainData?.user.id!,
+      initialValues.current.mainData?.user.id ?? schedule_id,
       initialValues.current.year,
       initialValues.current.month
     )

@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation'
 import { DateDropDown } from './DateDropDown'
 import { PlaceDropDown } from './PlaceDropDown'
 import { useDateStore } from '@/src/stores/useDateStore'
-import Image from 'next/image'
 import { useThemeStore } from '@/src/stores/useThemeStore'
 
 export const TopBar = () => {
@@ -23,7 +22,7 @@ export const TopBar = () => {
             router.push('/settings')
           }}
         >
-          <Image src={'/setting.svg'} alt="Настройки" width={24} height={24} />
+          <img src={'/setting.svg'} alt="Настройки" width={24} height={24} />
         </button>
         <PlaceDropDown />
       </div>
