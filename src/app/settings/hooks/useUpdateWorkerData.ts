@@ -6,7 +6,7 @@ export const useUpdateWorkerData = () => {
     const response = await fetchTyped<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/delete`,
       {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },

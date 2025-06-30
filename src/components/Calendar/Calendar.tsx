@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { BottomBar } from '../BottomBar/BottomBar'
 import { useMainStore } from '@/src/stores/useMainStore'
 import { useThemeStore } from '@/src/stores/useThemeStore'
+import AcceptButton from '@/src/app/settings/components/AcceptButton'
 
 const weekDays = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
 
@@ -159,28 +160,13 @@ export const Calendar = () => {
       </div>
 
       {editable && (
-        <div className="grid grid-cols-2 gap-2 mt-1">
-          <button
-            onClick={handleCancel}
-            style={{
-              background: themeConst.cancelButton,
-              color: themeConst.text,
-            }}
-            className={`flex items-center justify-center text-xl h-12 p-2 rounded-[6px]`}
-          >
-            Отмена
-          </button>
-          <button
-            onClick={handleSave}
-            style={{
-              background: themeConst.acceptButton,
-              color: themeConst.text,
-            }}
-            className={`flex items-center justify-center text-xl h-12 p-2 rounded-[6px]`}
-          >
-            Сохранить
-          </button>
-        </div>
+        <AcceptButton
+          acceptClick={handleSave}
+          cancelClick={handleCancel}
+          topStyle={'grid grid-cols-2 gap-2 mt-1'}
+          height={'48px'}
+          disabled={false}
+        />
       )}
     </div>
   )

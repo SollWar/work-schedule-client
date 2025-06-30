@@ -6,6 +6,7 @@ import ModalColorPicker from '../Dialog/ModalColorPicker'
 import { useRouter } from 'next/navigation'
 import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { useUpdateWorkplaceData } from '../../hooks/useUpdateWorkplaceData'
+import AcceptButton from '../AcceptButton'
 
 interface WorkplaceSettingProps {
   workplaceId: string
@@ -19,7 +20,8 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
   const [colorPickerModalOpen, setColorPickerModalOpen] = useState(false)
   const [nameInput, setNameInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const { updateName, updateColor, createWorkplace } = useUpdateWorkplaceData()
+  const { updateName, updateColor, createWorkplace, deleteWorkplace } =
+    useUpdateWorkplaceData()
   const router = useRouter()
 
   useEffect(() => {
@@ -40,6 +42,11 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
 
   const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNameInput(e.target.value)
+  }
+
+  const handleDeleteWorkplace = async (workplaceId: string) => {
+    await deleteWorkplace(workplaceId)
+    router.back()
   }
 
   const handleColorUpdate = async (color: string) => {
@@ -93,32 +100,17 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
             className="py-2 px-4 w-full border-1 border-[#2B7FFF] rounded-[6px]"
           ></input>
         </div>
-        <div className="grid grid-cols-2 gap-2 mt-1">
-          <button
-            onClick={() => {
-              setNameModalOpen(false)
-            }}
-            style={{
-              background: loading ? 'gray' : '#EF4444',
-            }}
-            disabled={loading}
-            className="flex text-white items-center justify-center text-xl p-2 rounded-[6px]"
-          >
-            Отмена
-          </button>
-          <button
-            onClick={() => {
-              handleNameUpdate(nameInput)
-            }}
-            style={{
-              background: loading ? 'gray' : '#12C739',
-            }}
-            disabled={loading}
-            className="flex text-white items-center justify-center text-xl p-2 rounded-[6px]"
-          >
-            Сохранить
-          </button>
-        </div>
+        <AcceptButton
+          acceptClick={() => {
+            handleNameUpdate(nameInput)
+          }}
+          cancelClick={() => {
+            setNameModalOpen(false)
+          }}
+          topStyle={'grid grid-cols-2 gap-2 mt-1'}
+          height={'44px'}
+          disabled={loading}
+        />
       </ModalInput>
       <ModalInput
         onClose={() => {
@@ -136,26 +128,42 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
           selectColor={handleColorUpdate}
         />
       </ModalInput>
-      <div className="h-12 bg-white flex justify-between my-1 p-1">
-        <div className="flex flex-row items-center">
-          <button
-            onClick={() => {
-              router.back()
-            }}
-            className="bg-[#2B7FFF] px-4 h-full flex items-center rounded-[6px]"
-          >
-            <Image
-              src="/arrow_back.svg"
-              alt="Назад"
-              width={24}
-              height={24}
-              priority={true}
-            />
-          </button>
+      <div className="h-12 bg-white grid grid-cols-3 items-center my-1 p-1">
+        <button
+          onClick={() => {
+            router.back()
+          }}
+          className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start"
+        >
+          <Image
+            src="/arrow_back.svg"
+            alt="Назад"
+            width={24}
+            height={24}
+            priority={true}
+          />
+        </button>
 
-          <div className="ms-4 text-xl font-semibold">Настройки</div>
+        <div className="ms-4 text-xl w-fit font-semibold justify-self-center">
+          Настройки
         </div>
+
+        <button
+          onClick={() => {
+            handleDeleteWorkplace(workplaceId)
+          }}
+          className="bg-white px-4 h-full w-fit rounded-[6px] justify-self-end"
+        >
+          <Image
+            src="/trash.svg"
+            alt="Удалить"
+            width={24}
+            height={24}
+            priority={true}
+          />
+        </button>
       </div>
+
       <div className="ms-2">Магазин</div>
       <div className="flex flex-col text-white">
         <div
@@ -192,32 +200,15 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
         </div>{' '}
       </div>
       {workplaceId === 'new' ? (
-        <div className="grid grid-cols-2 gap-2 mt-1 mx-2">
-          <button
-            onClick={() => {
-              router.back()
-            }}
-            style={{
-              background: loading ? 'gray' : '#EF4444',
-            }}
-            disabled={loading}
-            className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
-          >
-            Отмена
-          </button>
-          <button
-            onClick={() => {
-              createNewWorplace(name, color)
-            }}
-            style={{
-              background: loading ? 'gray' : '#12C739',
-            }}
-            disabled={loading}
-            className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
-          >
-            Сохранить
-          </button>
-        </div>
+        <AcceptButton
+          acceptClick={() => {
+            createNewWorplace(name, color)
+          }}
+          cancelClick={router.back}
+          topStyle={'grid grid-cols-2 gap-2 mt-1 mx-2'}
+          height={'44px'}
+          disabled={loading}
+        />
       ) : (
         ''
       )}

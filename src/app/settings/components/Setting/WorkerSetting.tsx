@@ -7,6 +7,7 @@ import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { useRouter } from 'next/navigation'
 import { useWorkerData } from '@/src/hooks/useWorkerData'
 import { useMainStore } from '@/src/stores/useMainStore'
+import AcceptButton from '../AcceptButton'
 
 interface WorkerSettingProps {
   workerId: string
@@ -141,32 +142,17 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
             className="py-2 px-4 w-full border-1 border-[#2B7FFF] rounded-[6px]"
           ></input>
         </div>
-        <div className="grid grid-cols-2 gap-2 mt-1">
-          <button
-            onClick={() => {
-              setNameModalOpen(false)
-            }}
-            style={{
-              background: loading ? 'gray' : '#EF4444',
-            }}
-            disabled={loading}
-            className="flex text-white items-center justify-center text-xl p-2 rounded-[6px]"
-          >
-            Отмена
-          </button>
-          <button
-            onClick={() => {
-              handleNameUpdate(nameInput)
-            }}
-            style={{
-              background: loading ? 'gray' : '#12C739',
-            }}
-            disabled={loading}
-            className="flex text-white items-center justify-center text-xl p-2 rounded-[6px]"
-          >
-            Сохранить
-          </button>
-        </div>
+        <AcceptButton
+          acceptClick={() => {
+            handleNameUpdate(nameInput)
+          }}
+          cancelClick={() => {
+            setNameModalOpen(false)
+          }}
+          topStyle={'grid grid-cols-2 gap-2 mt-1'}
+          height={'44px'}
+          disabled={loading}
+        />
       </ModalInput>
       <ModalInput
         onClose={() => {
@@ -176,7 +162,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
         isOpen={telegramIdModalOpen}
       >
         <div className="mb-2">Введите TelegramID</div>
-        <div className="flex items-center justify-center mb-4">
+        <div className="flex items-center justify-center mb-2">
           <input
             type="text"
             value={telegraIdInput}
@@ -184,32 +170,17 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
             className="py-2 px-4 w-full border-1 border-[#2B7FFF] rounded-[6px]"
           ></input>
         </div>
-        <div className="grid grid-cols-2 gap-2 mt-1">
-          <button
-            onClick={() => {
-              setTelegramIdModalOpen(false)
-            }}
-            style={{
-              background: loading ? 'gray' : '#EF4444',
-            }}
-            disabled={loading}
-            className="flex text-white items-center justify-center text-xl p-2 rounded-[6px]"
-          >
-            Отмена
-          </button>
-          <button
-            onClick={() => {
-              handleTelegramIdUpdate(telegraIdInput)
-            }}
-            style={{
-              background: loading ? 'gray' : '#12C739',
-            }}
-            disabled={loading}
-            className="flex text-white items-center justify-center text-xl p-2 rounded-[6px]"
-          >
-            Сохранить
-          </button>
-        </div>
+        <AcceptButton
+          acceptClick={() => {
+            handleTelegramIdUpdate(telegraIdInput)
+          }}
+          cancelClick={() => {
+            setTelegramIdModalOpen(false)
+          }}
+          disabled={loading}
+          topStyle={'grid grid-cols-2 gap-2 mt-1 h-[44px]'}
+          height="44px"
+        />
       </ModalInput>
       <ModalInput
         onClose={() => {
@@ -227,45 +198,43 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
           selectColor={handleColorUpdate}
         />
       </ModalInput>
-      <div className="h-12 bg-white flex  my-1 p-1">
-        <div className="flex w-full flex-row items-center">
+      <div className="h-12 bg-white grid grid-cols-3 items-center my-1 p-1">
+        <button
+          onClick={() => {
+            router.back()
+          }}
+          className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start"
+        >
+          <Image
+            src="/arrow_back.svg"
+            alt="Назад"
+            width={24}
+            height={24}
+            priority={true}
+          />
+        </button>
+
+        <div className="ms-4 text-xl w-fit font-semibold justify-self-center">
+          Настройки
+        </div>
+        {worker?.id === mainData?.user.id ? (
+          <div></div>
+        ) : (
           <button
             onClick={() => {
-              router.back()
+              handleDeleteWorker(workerId)
             }}
-            className="bg-[#2B7FFF] px-4 h-full flex items-center rounded-[6px]"
+            className="bg-white px-4 h-full w-fit rounded-[6px] justify-self-end"
           >
             <Image
-              src="/arrow_back.svg"
-              alt="Назад"
+              src="/trash.svg"
+              alt="Удалить"
               width={24}
               height={24}
               priority={true}
             />
           </button>
-
-          <div className="flex flex-row justify-between w-full">
-            <div className="ms-4 text-xl font-semibold">Настройки</div>
-            {worker?.id === mainData?.user.id ? (
-              <div></div>
-            ) : (
-              <button
-                onClick={() => {
-                  handleDeleteWorker(workerId)
-                }}
-                className="bg-[white] px-4 h-full flex items-center rounded-[6px]"
-              >
-                <Image
-                  src="/trash.svg"
-                  alt="Удалить"
-                  width={24}
-                  height={24}
-                  priority={true}
-                />
-              </button>
-            )}
-          </div>
-        </div>
+        )}
       </div>
       <div className="ms-2">Профиль</div>
       <div className="flex flex-col text-white">
@@ -273,7 +242,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
           onClick={() => {
             setNameModalOpen(true)
           }}
-          className="mx-2 mt-2 py-3 px-2 flex flex-row items-center justify-between  bg-[#2B7FFF] rounded-[6px]"
+          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px]"
         >
           <div className=" ">Отображаемое имя</div>
           <div className="flex flex-row h-full items-center text-white">
@@ -286,7 +255,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
           onClick={() => {
             setColorPickerModalOpen(true)
           }}
-          className="mx-2 mt-2 mb-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px]"
+          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px]"
         >
           <div className=" ">Цвет в расписании</div>
           <div className="flex flex-row h-full items-center">
@@ -306,7 +275,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
           onClick={() => {
             setTelegramIdModalOpen(true)
           }}
-          className="mx-2 mt-1 py-3 px-2 flex flex-row items-center justify-between  bg-[#2B7FFF] rounded-[6px]"
+          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px]"
         >
           <div className=" ">TelegramID</div>
           <div className="flex flex-row h-full items-center text-white">
@@ -373,62 +342,26 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
                 </div>
               ))}
             {updateMode && (
-              <div className="grid grid-cols-2 gap-2 mt-1 mx-2">
-                <button
-                  onClick={() => {
-                    notUpdateWorkplace()
-                  }}
-                  style={{
-                    background: loading ? 'gray' : '#EF4444',
-                  }}
-                  disabled={loading}
-                  className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
-                >
-                  Отмена
-                </button>
-                <button
-                  onClick={() => {
-                    doUpdateWorkplace()
-                  }}
-                  style={{
-                    background: loading ? 'gray' : '#12C739',
-                  }}
-                  disabled={loading}
-                  className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
-                >
-                  Сохранить
-                </button>
-              </div>
+              <AcceptButton
+                acceptClick={doUpdateWorkplace}
+                cancelClick={notUpdateWorkplace}
+                disabled={loading}
+                topStyle="grid grid-cols-2 gap-2 mt-2 mx-2"
+                height={'48px'}
+              />
             )}
           </div>
         )}
         {workerId === 'new' ? (
-          <div className="grid grid-cols-2 gap-2 mt-1 mx-2">
-            <button
-              onClick={() => {
-                router.back()
-              }}
-              style={{
-                background: loading ? 'gray' : '#EF4444',
-              }}
-              disabled={loading}
-              className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
-            >
-              Отмена
-            </button>
-            <button
-              onClick={() => {
-                handleCreateWorker(name, color, telegramId)
-              }}
-              style={{
-                background: loading ? 'gray' : '#12C739',
-              }}
-              disabled={loading}
-              className="flex text-white items-center justify-center text-xl p-1 rounded-[6px]"
-            >
-              Сохранить
-            </button>
-          </div>
+          <AcceptButton
+            acceptClick={() => {
+              handleCreateWorker(name, color, telegramId)
+            }}
+            cancelClick={router.back}
+            disabled={loading}
+            topStyle="grid grid-cols-2 gap-2 mt-2 mx-2"
+            height={'48px'}
+          />
         ) : (
           ''
         )}

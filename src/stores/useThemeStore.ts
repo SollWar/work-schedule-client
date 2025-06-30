@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 
+type Theme = 'light' | 'dark'
+
 interface ThemeConst {
   text: string
   secondText: string
@@ -9,7 +11,6 @@ interface ThemeConst {
   acceptButton: string
   cancelButton: string
 }
-type Theme = 'light' | 'dark'
 
 interface ThemeState {
   theme: Theme
@@ -17,39 +18,36 @@ interface ThemeState {
   setTheme: (t: Theme) => void
 }
 
-const darkThemeConst: ThemeConst = {
-  text: '#ffffff',
-  secondText: '#747475',
-  background: '#FFE082',
-  secondBackground: '#ffffff',
-  button: '#2B7FFF',
-  acceptButton: '#12C739',
-  cancelButton: '#EF4444',
+const themes: Record<Theme, ThemeConst> = {
+  light: {
+    text: '#ffffff',
+    secondText: '#747475',
+    background: '#FFE082',
+    secondBackground: '#ffffff',
+    button: '#2B7FFF',
+    acceptButton: '#12C739',
+    cancelButton: '#EF4444',
+  },
+  dark: {
+    text: '#ffffff',
+    secondText: '#747475',
+    background: '#FFE082',
+    secondBackground: '#ffffff',
+    button: '#2B7FFF',
+    acceptButton: '#12C739',
+    cancelButton: '#EF4444',
+  },
 }
-const lightThemeConst: ThemeConst = {
-  text: '#ffffff',
-  secondText: '#747475',
-  background: '#FFE082',
-  secondBackground: '#ffffff',
-  button: '#2B7FFF',
-  acceptButton: '#12C739',
-  cancelButton: '#EF4444',
-}
+
+// Получение схемы от Telegram (если доступно)
+//const detectedColorScheme = WebApp?.colorScheme === 'dark' ? 'dark' : 'light'
 
 export const useThemeStore = create<ThemeState>((set) => ({
   theme: 'light',
-  themeConst: lightThemeConst,
-  setTheme: (t: Theme) => {
-    if (t === 'light') {
-      set({
-        themeConst: lightThemeConst,
-        theme: t,
-      })
-    } else {
-      set({
-        themeConst: darkThemeConst,
-        theme: t,
-      })
-    }
-  },
+  themeConst: themes['light'],
+  setTheme: (t: Theme) =>
+    set({
+      theme: t,
+      themeConst: themes[t],
+    }),
 }))

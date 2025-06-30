@@ -31,25 +31,27 @@ const SettingsPage = () => {
 
   return (
     <div>
-      <div className="h-12 bg-white flex  my-1 p-1">
-        <div className="flex w-full flex-row items-center">
-          <button
-            onClick={() => {
-              router.back()
-            }}
-            className="bg-[#2B7FFF] px-4 h-full flex items-center rounded-[6px]"
-          >
-            <Image
-              src="/arrow_back.svg"
-              alt="Назад"
-              width={24}
-              height={24}
-              priority={true}
-            />
-          </button>
+      <div className="h-12 bg-white grid grid-cols-3 items-center my-1 p-1">
+        <button
+          onClick={() => {
+            router.back()
+          }}
+          className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start"
+        >
+          <Image
+            src="/arrow_back.svg"
+            alt="Назад"
+            width={24}
+            height={24}
+            priority={true}
+          />
+        </button>
 
-          <div className="ms-4 text-xl font-semibold">Настройки</div>
+        <div className="ms-4 text-xl w-fit font-semibold justify-self-center">
+          Настройки
         </div>
+
+        <div></div>
       </div>
       {accessId === 1 && (
         <div className="mb-2">

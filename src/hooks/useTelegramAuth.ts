@@ -6,7 +6,7 @@ export const useTelegramAuth = () => {
   const [telegramId, setTelegramId] = useState('')
 
   useEffect(() => {
-    setTelegramInitData('1')
+    setTelegramInitData('924296919')
     // const importWebApp = async () => {
     //   const { default: WebApp } = await import('@twa-dev/sdk')
 

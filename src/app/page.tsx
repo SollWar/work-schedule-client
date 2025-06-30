@@ -7,9 +7,12 @@ import { useSystemTheme } from '../hooks/useSystemTheme'
 import Image from 'next/image'
 import styles from './page.module.css'
 import { useTelegramAuth } from '../hooks/useTelegramAuth'
+import { useThemeStore } from '../stores/useThemeStore'
+import clsx from 'clsx'
 
 export default function Home() {
   useSystemTheme()
+  const { themeConst } = useThemeStore()
   const { mainData, mainStoreInit } = useMainStore()
   const { telegramId } = useTelegramAuth()
   const [loading, setLoading] = useState(mainData === null)
@@ -44,9 +47,9 @@ export default function Home() {
     )
   else
     return (
-      <div>
+      <div className={`bg-[${themeConst.background}]`}>
         <TopBar />
-        <div className="px-1">
+        <div className={'px-1'}>
           <Calendar />
         </div>
       </div>
