@@ -97,6 +97,12 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
             type="text"
             value={nameInput}
             onChange={handleNameInputChange}
+            autoFocus={true}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleNameUpdate(nameInput)
+              }
+            }}
             className="py-2 px-4 w-full border-1 border-[#2B7FFF] rounded-[6px]"
           ></input>
         </div>
@@ -164,7 +170,6 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
         </button>
       </div>
 
-      <div className="ms-2">Магазин</div>
       <div className="flex flex-col text-white">
         <div
           onClick={() => {

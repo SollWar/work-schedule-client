@@ -8,7 +8,6 @@ import Image from 'next/image'
 import styles from './page.module.css'
 import { useTelegramAuth } from '../hooks/useTelegramAuth'
 import { useThemeStore } from '../stores/useThemeStore'
-import clsx from 'clsx'
 
 export default function Home() {
   useSystemTheme()

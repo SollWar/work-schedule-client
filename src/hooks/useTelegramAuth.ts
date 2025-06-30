@@ -29,7 +29,7 @@ export const useTelegramAuth = () => {
 
   const telegramAuth = async () => {
     const result = await fetchTyped<string>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/tAuth/?initData=${telegramInitData}`
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/login/telegram/?initData=${telegramInitData}`
     )
 
     setTelegramId(result)

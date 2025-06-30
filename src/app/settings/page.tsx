@@ -80,21 +80,25 @@ const SettingsPage = () => {
             className={`mx-2 overflow-hidden transition-all duration-300 ease-in-out`}
             style={{
               maxHeight: workersListOpen
-                ? `${workers.length * 3 + 3}rem`
+                ? `${workers.length * 3 + 6}rem`
                 : '0rem',
             }}
           >
-            {workers.map((worker) => (
-              <div
-                onClick={() => {
-                  router.push(`/worker?id=${worker.id}`)
-                }}
-                key={worker.id}
-                className="mt-1 ms-4 py-2 px-2 bg-[#2B7FFF] rounded-[6px] text-white"
-              >
-                <div>{worker.name}</div>
-              </div>
-            ))}
+            {workers.length === 0 ? (
+              <div className="h-[40px] mt-1 ms-4 py-2 px-2 rounded-[6px] text-white bg-slate-300 animate-pulse" />
+            ) : (
+              workers.map((worker) => (
+                <div
+                  onClick={() => {
+                    router.push(`/worker?id=${worker.id}`)
+                  }}
+                  key={worker.id}
+                  className="mt-1 ms-4 py-2 px-2 bg-[#2B7FFF] rounded-[6px] text-white"
+                >
+                  <div>{worker.name}</div>
+                </div>
+              ))
+            )}
             <div
               onClick={() => {
                 router.push(`/worker?id=${'new'}`)
@@ -129,21 +133,25 @@ const SettingsPage = () => {
             className={`mx-2 overflow-hidden transition-all duration-300 ease-in-out`}
             style={{
               maxHeight: workplacesListOpen
-                ? `${workplaces.length * 3 + 3}rem`
+                ? `${workplaces.length * 3 + 6}rem`
                 : '0rem',
             }}
           >
-            {workplaces.map((workplace) => (
-              <div
-                onClick={() => {
-                  router.push(`/workplace?id=${workplace.id}`)
-                }}
-                key={workplace.id}
-                className="mt-1 ms-4 py-2 px-2 bg-[#2B7FFF] rounded-[6px] text-white"
-              >
-                <div>{workplace.name}</div>
-              </div>
-            ))}
+            {workplaces.length === 0 ? (
+              <div className="h-[40px] mt-1 ms-4 py-2 px-2 rounded-[6px] text-white bg-slate-300 animate-pulse" />
+            ) : (
+              workplaces.map((workplace) => (
+                <div
+                  onClick={() => {
+                    router.push(`/workplace?id=${workplace.id}`)
+                  }}
+                  key={workplace.id}
+                  className="mt-1 ms-4 py-2 px-2 bg-[#2B7FFF] rounded-[6px] text-white"
+                >
+                  <div>{workplace.name}</div>
+                </div>
+              ))
+            )}
             <div
               onClick={() => {
                 router.push(`/workplace?id=${'new'}`)

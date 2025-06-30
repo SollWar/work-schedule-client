@@ -8,15 +8,18 @@ import { useRouter } from 'next/navigation'
 import { useWorkerData } from '@/src/hooks/useWorkerData'
 import { useMainStore } from '@/src/stores/useMainStore'
 import AcceptButton from '../AcceptButton'
+import { useToastStore } from '@/src/stores/toastStore'
 
 interface WorkerSettingProps {
   workerId: string
 }
 
 const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
+  //const toast = useToastStore((s) => s.toast)
+  const { toast } = useToastStore()
   const [nameModalOpen, setNameModalOpen] = useState(false)
   const [telegramIdModalOpen, setTelegramIdModalOpen] = useState(false)
-  const [name, setName] = useState('Работник')
+  const [name, setName] = useState('')
   const [telegramId, setTelegramId] = useState('')
   const [color, setColor] = useState('#0070F3')
   const [colorPickerModalOpen, setColorPickerModalOpen] = useState(false)
@@ -36,6 +39,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
     updateWorkplaceEnabled,
     notUpdateWorkplace,
     doUpdateWorkplace,
+    workerDataLoaded,
   } = useWorkerData()
   const router = useRouter()
 
@@ -52,12 +56,13 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
       setName(worker.name)
       setColor(worker.color)
     } else {
-      setNameInput('Работник')
+      setNameInput('')
     }
   }, [worker])
 
   const handleDeleteWorker = async (workerId: string) => {
     await deleteWorker(workerId)
+    toast(name + ' удален')
     router.back()
   }
 
@@ -87,6 +92,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
       await getWorkerData(worker.id)
       setLoading(true)
       setColorPickerModalOpen(false)
+      toast('Цвет обновлен')
     } else {
       setColorPickerModalOpen(false)
     }
@@ -100,6 +106,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
       await getWorkerData(worker.id)
       setNameModalOpen(false)
       setLoading(false)
+      toast('Имя обновлено')
     } else {
       setNameModalOpen(false)
     }
@@ -117,11 +124,21 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
     color: string,
     telegramId: string
   ) => {
-    console.log(name, color, telegramId)
-    if (name !== '' && color !== '' && telegramId !== '') {
-      await createWorker(name, color, '0', telegramId)
-      router.back()
+    if (!name.trim()) {
+      toast('Введите имя работника')
+      return
     }
+    if (!color.trim()) {
+      toast('Выберите цвет')
+      return
+    }
+    if (!telegramId.trim()) {
+      toast('Введите TelegramID')
+      return
+    }
+    await createWorker(name, color, '0', telegramId)
+    toast(name + ' создан')
+    router.back()
   }
 
   return (
@@ -139,6 +156,12 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
             type="text"
             value={nameInput}
             onChange={handleNameInputChange}
+            autoFocus={true}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleNameUpdate(nameInput)
+              }
+            }}
             className="py-2 px-4 w-full border-1 border-[#2B7FFF] rounded-[6px]"
           ></input>
         </div>
@@ -167,6 +190,12 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
             type="text"
             value={telegraIdInput}
             onChange={handleTelegramIdInputChange}
+            autoFocus={true}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleTelegramIdUpdate(telegraIdInput)
+              }
+            }}
             className="py-2 px-4 w-full border-1 border-[#2B7FFF] rounded-[6px]"
           ></input>
         </div>
@@ -236,7 +265,6 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
           </button>
         )}
       </div>
-      <div className="ms-2">Профиль</div>
       <div className="flex flex-col text-white">
         <div
           onClick={() => {
@@ -246,7 +274,20 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
         >
           <div className=" ">Отображаемое имя</div>
           <div className="flex flex-row h-full items-center text-white">
-            <div className="me-2 flex items-center justify-center">{name}</div>
+            {name === '' ? (
+              <Image
+                className="me-2"
+                src="/dot_loader.svg"
+                alt="Загрузка"
+                width={56}
+                height={36}
+                priority={true}
+              />
+            ) : (
+              <div className="me-2 flex items-center justify-center">
+                {name}
+              </div>
+            )}
             <div className=" ">{' >'}</div>
           </div>
         </div>
@@ -259,15 +300,27 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
         >
           <div className=" ">Цвет в расписании</div>
           <div className="flex flex-row h-full items-center">
-            <div
-              style={{
-                background: color,
-                color: getContrastTextColor(color),
-              }}
-              className="h-[90%] aspect-square me-2 flex items-center justify-center border-2 border-white rounded-[6px]"
-            >
-              27
-            </div>
+            {workerDataLoaded ? (
+              <div
+                style={{
+                  background: color,
+                  color: getContrastTextColor(color),
+                }}
+                className="h-[90%] aspect-square me-2 flex items-center justify-center border-2 border-white rounded-[6px]"
+              >
+                27
+              </div>
+            ) : (
+              <Image
+                className="me-2"
+                src="/dot_loader.svg"
+                alt="Загрузка"
+                width={56}
+                height={36}
+                priority={true}
+              />
+            )}
+
             <div className=" text-white">{' >'}</div>
           </div>
         </div>
@@ -279,16 +332,29 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
         >
           <div className=" ">TelegramID</div>
           <div className="flex flex-row h-full items-center text-white">
-            <div className="me-2 flex items-center justify-center">
-              {telegramId}
-            </div>
+            {workerDataLoaded ? (
+              <div className="me-2 flex items-center justify-center">
+                {telegramId}
+              </div>
+            ) : (
+              <Image
+                className="me-2"
+                src="/dot_loader.svg"
+                alt="Загрузка"
+                width={56}
+                height={36}
+                priority={true}
+              />
+            )}
+
             <div className=" ">{' >'}</div>
           </div>
         </div>
         {mainData?.user.access_id === 1 && workerId !== 'new' && (
           <div>
-            <div className="ms-2 text-black">Назначения</div>
-            {workplacesForSetting.length > 0 &&
+            {workerDataLoaded === false ? (
+              <div className="h-[48px] mt-1 mx-2 py-2 px-2 rounded-[6px] text-white flex flex-col bg-slate-300 animate-pulse" />
+            ) : (
               workplacesForSetting.map((workplace) => (
                 <div
                   key={'workplace_' + workplace.id}
@@ -340,10 +406,14 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
                     </div>
                   )}
                 </div>
-              ))}
+              ))
+            )}
             {updateMode && (
               <AcceptButton
-                acceptClick={doUpdateWorkplace}
+                acceptClick={async () => {
+                  await doUpdateWorkplace()
+                  toast('Назначения обновлены')
+                }}
                 cancelClick={notUpdateWorkplace}
                 disabled={loading}
                 topStyle="grid grid-cols-2 gap-2 mt-2 mx-2"

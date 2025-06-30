@@ -8,6 +8,7 @@ import { useUpdateWorkerData } from '../app/settings/hooks/useUpdateWorkerData'
 
 export const useWorkerData = () => {
   const [worker, setWorker] = useState<Worker>()
+  const [workerDataLoaded, setWorkerDataLoaded] = useState(false)
   const { updateWorkplace } = useUpdateWorkerData()
   const [workplaces, setWorkplaces] = useState<Workplace[]>([])
   const { mainData, reloadMainStore } = useMainStore()
@@ -82,13 +83,12 @@ export const useWorkerData = () => {
         editable: match?.editable,
       }
     })
-
     setWorkplacesForSetting(result)
   }
 
   const getWorkerData = async (workerId: string | null) => {
     const response = await fetchTyped<Worker>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user?id=${workerId}`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker?id=${workerId}`,
       {
         method: 'GET',
       }
@@ -102,12 +102,14 @@ export const useWorkerData = () => {
   const getWorkerWorkplaces = async (workerId: string | null) => {
     await getAllWorkplaces()
     const response = await fetchTyped<WorkplaceForSetting[]>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplaces?worker_id=${workerId}`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/user?worker_id=${workerId}`,
       {
         method: 'GET',
       }
     )
     setWorkplaces(response)
+
+    setWorkerDataLoaded(true)
   }
 
   return {
@@ -120,5 +122,6 @@ export const useWorkerData = () => {
     notUpdateWorkplace,
     doUpdateWorkplace,
     updateMode,
+    workerDataLoaded,
   }
 }

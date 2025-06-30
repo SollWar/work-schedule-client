@@ -4,7 +4,7 @@ import fetchTyped from '@/src/utils/fetchTyped'
 export const useUpdateWorkerData = () => {
   const deleteWorker = async (workerId: string) => {
     const response = await fetchTyped<boolean>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/delete`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/delete`,
       {
         method: 'DELETE',
         headers: {
@@ -22,9 +22,9 @@ export const useUpdateWorkerData = () => {
     color: string,
     access_id: string,
     telegram_id: string
-  ): Promise<boolean> => {
-    const response = await fetchTyped<boolean>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/create`,
+  ): Promise<string> => {
+    const response = await fetchTyped<string>(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/create`,
       {
         method: 'POST',
         headers: {
@@ -46,7 +46,7 @@ export const useUpdateWorkerData = () => {
     workplaces: WorkplaceForSetting[]
   ): Promise<boolean> => {
     const response = await fetchTyped<boolean>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/update/workplaces`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/update/workplaces`,
       {
         method: 'POST',
         headers: {
@@ -66,7 +66,7 @@ export const useUpdateWorkerData = () => {
     workerId: string
   ): Promise<boolean> => {
     const response = await fetchTyped<boolean>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/update`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/update`,
       {
         method: 'POST',
         headers: {
@@ -85,7 +85,7 @@ export const useUpdateWorkerData = () => {
     workerId: string
   ): Promise<boolean> => {
     const response = await fetchTyped<boolean>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user/update`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/update`,
       {
         method: 'POST',
         headers: {

@@ -9,7 +9,7 @@ export const useGetData = () => {
 
   const getWorkers = async () => {
     const response = await fetchTyped<Worker[]>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/allusers`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/all`,
       {
         method: 'GET',
       }
@@ -19,7 +19,7 @@ export const useGetData = () => {
 
   const getWorkplaces = async () => {
     const response = await fetchTyped<Workplace[]>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/allworkplaces`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/all`,
       {
         method: 'GET',
       }
