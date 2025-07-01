@@ -1,15 +1,20 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 import { useRouter } from 'next/navigation'
 import { useMainStore } from '../../stores/useMainStore'
 import { useEffect, useState } from 'react'
 import { useGetData } from './hooks/useGetData'
+import { useRequest } from '@/src/hooks/useRequest'
+import { formatPostgresDate } from '@/src/utils/dateUtils'
 
 //const accessType = ['Обычный', 'Админ']
 
 const SettingsPage = () => {
   const { getWorkers, getWorkplaces, workers, workplaces } = useGetData()
+  const { requests, requestsAvailable, getRequests } = useRequest()
   const { mainData } = useMainStore()
   const [accessId, setAccessId] = useState(0)
+  const [requestsListOpen, setRequestListOpen] = useState(true)
   const [workersListOpen, setWorkersListOpen] = useState(true)
   const [workplacesListOpen, setWorkplacesListOpen] = useState(true)
   const router = useRouter()
@@ -22,6 +27,7 @@ const SettingsPage = () => {
         router.replace(`/worker?id=${mainData.user.id}`)
       }
       setAccessId(mainData.user.access_id)
+      getRequests()
       getWorkers()
       getWorkplaces()
     }
@@ -48,6 +54,57 @@ const SettingsPage = () => {
       {accessId === 1 && (
         <div className="mb-2">
           {/* <div className="ms-2 mt-1 text-black">Админка</div> */}
+          <div
+            onClick={() => {
+              if (!requestsListOpen) {
+                getRequests()
+              }
+              setRequestListOpen(!requestsListOpen)
+            }}
+            className={
+              'mx-2 mt-1 py-3 px-2 flex flex-row items-center justify-between rounded-[6px] cursor-pointer ' +
+              (accessId === 1 ? 'bg-[#2B7FFF]' : 'bg-[#747475]')
+            }
+          >
+            <div className="text-white">Список запросов</div>
+            <div className="flex flex-row h-full items-center text-gray-300">
+              <div className="me-4 flex items-center justify-center">
+                {requestsListOpen ? 'Закрыть' : 'Открыть'}
+              </div>
+            </div>
+          </div>
+
+          <div
+            className={`mx-2 overflow-hidden transition-all duration-300 ease-in-out`}
+            style={{
+              maxHeight: requestsListOpen
+                ? `${requests.length * 3 + 6}rem`
+                : '0rem',
+            }}
+          >
+            {!requestsAvailable ? (
+              <div className="h-[40px] mt-1 ms-4 py-2 px-2 rounded-[6px] text-white bg-[gray]">
+                Запросов нет
+              </div>
+            ) : requests.length === 0 ? (
+              <div className="h-[40px] mt-1 ms-4 py-2 px-2 rounded-[6px] text-white bg-slate-300 animate-pulse" />
+            ) : (
+              requests.map((request) => (
+                <div
+                  onClick={() => {
+                    router.push(
+                      `/worker?id=new&tid=${request.telegram_id}&wname=${request.worker_name}`
+                    )
+                  }}
+                  key={request.telegram_id}
+                  className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white"
+                >
+                  <div>{request.worker_name}</div>
+                  <div>{formatPostgresDate(request.created_at)}</div>
+                </div>
+              ))
+            )}
+          </div>
           <div
             onClick={() => {
               if (!workersListOpen) {
@@ -85,9 +142,10 @@ const SettingsPage = () => {
                     router.push(`/worker?id=${worker.id}`)
                   }}
                   key={worker.id}
-                  className="mt-1 ms-4 py-2 px-2 bg-[#2B7FFF] rounded-[6px] text-white"
+                  className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white"
                 >
                   <div>{worker.name}</div>
+                  <div>{worker.id}</div>
                 </div>
               ))
             )}
@@ -138,9 +196,10 @@ const SettingsPage = () => {
                     router.push(`/workplace?id=${workplace.id}`)
                   }}
                   key={workplace.id}
-                  className="mt-1 ms-4 py-2 px-2 bg-[#2B7FFF] rounded-[6px] text-white"
+                  className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white"
                 >
                   <div>{workplace.name}</div>
+                  <div>{workplace.id}</div>
                 </div>
               ))
             )}

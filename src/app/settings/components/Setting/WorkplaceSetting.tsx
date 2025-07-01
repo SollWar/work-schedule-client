@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useWorkplaceData } from '@/src/hooks/useWorkplaceData'
 import { useEffect, useState } from 'react'
 import ModalInput from '../Dialog/ModalInput'

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 import { useEffect, useState } from 'react'
 import { Calendar } from '../components/Calendar/Calendar'
@@ -7,19 +8,25 @@ import { useSystemTheme } from '../hooks/useSystemTheme'
 import styles from './page.module.css'
 import { useTelegramAuth } from '../hooks/useTelegramAuth'
 import { useThemeStore } from '../stores/useThemeStore'
+import { useToastStore } from '../stores/toastStore'
+import RequestPage from './components/RequestPage/RequestPage'
 
 export default function Home() {
   useSystemTheme()
+  const { toast } = useToastStore()
   const { themeConst } = useThemeStore()
-  const { mainData, mainStoreInit } = useMainStore()
-  const { telegramId } = useTelegramAuth()
+  const { mainData, mainStoreInit, telegramId } = useMainStore()
+  const { telegramInitData } = useTelegramAuth()
   const [loading, setLoading] = useState(mainData === null)
 
   useEffect(() => {
-    if (telegramId !== '') {
+    if (telegramInitData !== '') {
       mainStoreInit()
     }
-  }, [telegramId])
+    if (telegramId === 'none') {
+      toast('Пользователь не найден')
+    }
+  }, [telegramId, telegramInitData])
 
   useEffect(() => {
     if (mainData) {
@@ -31,15 +38,19 @@ export default function Home() {
     return (
       <div className={styles.main}>
         <div className={styles.body}>
-          <img
-            src="/icon.png"
-            alt="Иконка приложения"
-            width={128}
-            height={128}
-          />
-          <div>{telegramId}</div>
-          <div className={styles.loader}></div>
-          {/* <div className={styles.error_message}>{authResult}</div> */}
+          {telegramId === 'none' ? (
+            <RequestPage />
+          ) : (
+            <div>
+              <img
+                src="/icon.png"
+                alt="Иконка приложения"
+                width={128}
+                height={128}
+              />
+              <div className={styles.loader}></div>
+            </div>
+          )}
         </div>
       </div>
     )

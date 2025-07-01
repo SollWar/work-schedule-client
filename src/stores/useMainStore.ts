@@ -1,40 +1,61 @@
 import { create } from 'zustand'
 import fetchTyped from '../utils/fetchTyped'
 import { MainData } from '../types/MainData'
+import { Workplace } from '../types/Workplace'
+import { Worker } from '../types/Worker'
 
 interface MainStoreState {
   mainData: MainData | null
-  telegramId: string | null
+  telegramId: string
+  initData: () => { selected: Worker | Workplace; type: 'worker' | 'workplace' }
   mainStoreInit: () => void
   setTelegramId: (telegramId: string) => void
-  reloadMainStore: () => Promise<void>
 }
 
-export const useMainStore = create<MainStoreState>((set) => ({
+export const useMainStore = create<MainStoreState>((set, get) => ({
   mainData: null,
-  telegramId: null,
-  setTelegramId(telegramId) {
-    set({
-      telegramId: telegramId,
-    })
+  telegramId: '',
+  initData() {
+    const currMainData = get().mainData
+    if (currMainData) {
+      if (currMainData.availableWorkplaces.length > 1) {
+        return { selected: currMainData.availableWorkers[0], type: 'worker' }
+      } else
+        return {
+          selected: currMainData.availableWorkplaces[0],
+          type: 'workplace',
+        }
+    } else
+      return {
+        selected: { id: '0', name: 'null', color: 'null' },
+        type: 'workplace',
+      }
   },
-  async reloadMainStore() {
-    const result = await fetchTyped<MainData>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main`
-    )
-    set({
-      mainData: null,
-    })
-    set({
-      mainData: result,
-    })
+  setTelegramId(telegramId) {
+    set((prev) => ({
+      ...prev,
+      telegramId: telegramId,
+    }))
   },
   async mainStoreInit() {
-    const result = await fetchTyped<MainData>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main`
-    )
-    set({
-      mainData: result,
-    })
+    try {
+      const result = await fetchTyped<MainData>(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main`
+      )
+      set((prev) => ({
+        ...prev,
+        mainData: null,
+      }))
+      set((prev) => ({
+        ...prev,
+        mainData: result,
+      }))
+    } catch {
+      set((prev) => ({
+        ...prev,
+        mainData: null,
+        telegramId: 'none',
+      }))
+    }
   },
 }))

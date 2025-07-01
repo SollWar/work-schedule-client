@@ -11,7 +11,7 @@ export const useWorkerData = () => {
   const [workerDataLoaded, setWorkerDataLoaded] = useState(false)
   const { updateWorkplace } = useUpdateWorkerData()
   const [workplaces, setWorkplaces] = useState<Workplace[]>([])
-  const { mainData, reloadMainStore } = useMainStore()
+  const { mainData, mainStoreInit } = useMainStore()
   const [updateMode, setUpdateMode] = useState(false)
   const { workplaces: allWorkplaces, getWorkplaces: getAllWorkplaces } =
     useGetData()
@@ -95,7 +95,7 @@ export const useWorkerData = () => {
     )
     setWorker(response)
     if (response.id === mainData?.user.id) {
-      reloadMainStore()
+      mainStoreInit()
     }
   }
 

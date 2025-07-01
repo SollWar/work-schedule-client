@@ -1,4 +1,4 @@
-// src/app/settings/components/Setting/WorkerSetting.tsx
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react'
 import { useUpdateWorkerData } from '../../hooks/useUpdateWorkerData'
 import ModalInput from '../Dialog/ModalInput'

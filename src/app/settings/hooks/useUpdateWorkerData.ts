@@ -61,6 +61,26 @@ export const useUpdateWorkerData = () => {
     return response
   }
 
+  const updateAccess = async (
+    accessId: number,
+    workerId: string
+  ): Promise<boolean> => {
+    const response = await fetchTyped<boolean>(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/update`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: workerId,
+          access_id: accessId,
+        }),
+      }
+    )
+    return response
+  }
+
   const updateName = async (
     name: string,
     workerId: string
@@ -106,5 +126,6 @@ export const useUpdateWorkerData = () => {
     updateWorkplace,
     createWorker,
     deleteWorker,
+    updateAccess,
   }
 }

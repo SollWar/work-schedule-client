@@ -8,6 +8,7 @@ import { Worker } from '../types/Worker'
 interface ScheduleStoreState {
   scheduleList: string[]
   entities: Worker[] | Workplace[]
+  currentSelected: Worker | Workplace | null
   isLoading: boolean
   type: 'worker' | 'workplace'
   schedule_id: string
@@ -23,6 +24,7 @@ interface ScheduleStoreState {
 
 export const useScheduleStore = create<ScheduleStoreState>((set) => ({
   entities: [],
+  currentSelected: null,
   scheduleList: [],
   isLoading: true,
   type: 'worker',
@@ -37,15 +39,26 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
     }))
   },
   async getSchedule(type, id, year, month) {
-    set({ isLoading: true, scheduleList: [], entities: [], schedule_id: '' })
+    set({
+      isLoading: true,
+      scheduleList: [],
+      entities: [],
+      schedule_id: '',
+      currentSelected: null,
+    })
     if (type === 'worker') {
       try {
-        const schedule = await fetchTyped<Schedule>(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/schedule/worker?worker_id=${id}&year=${year}&month=${month}`
-        )
-        const entities = await fetchTyped<Workplace[]>(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/user?worker_id=${id}`
-        )
+        const [schedule, selected, entities] = await Promise.all([
+          fetchTyped<Schedule>(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/schedule/worker?worker_id=${id}&year=${year}&month=${month}`
+          ),
+          fetchTyped<Worker>(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/?id=${id}`
+          ),
+          fetchTyped<Workplace[]>(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/user?worker_id=${id}`
+          ),
+        ])
 
         if (schedule.schedule !== '') {
           set({
@@ -53,6 +66,7 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
             scheduleList: schedule.schedule.split(','),
             type: 'worker',
             entities: entities,
+            currentSelected: selected,
             isLoading: false,
           })
         } else {
@@ -61,6 +75,7 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
             scheduleList: new Array(getDaysInMonth(year, month)).fill('0'),
             type: 'worker',
             entities: entities,
+            currentSelected: selected,
             isLoading: false,
           })
         }
@@ -69,9 +84,12 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
       }
     } else if (type === 'workplace') {
       try {
-        const [schedules, entities] = await Promise.all([
+        const [schedules, selected, entities] = await Promise.all([
           fetchTyped<Schedule[]>(
             `${process.env.NEXT_PUBLIC_SERVER_URL}/api/schedule/workplace?workplace_id=${id}&year=${year}&month=${month}`
+          ),
+          fetchTyped<Workplace>(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/?id=${id}`
           ),
           fetchTyped<Workplace[]>(
             `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/workplace?workplace_id=${id}`
@@ -115,6 +133,7 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
           schedule_id: id,
           type: 'workplace',
           entities: entities,
+          currentSelected: selected,
           scheduleList: schedule,
           isLoading: false,
         })

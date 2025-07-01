@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react'
 import { useUpdateWorkerData } from '../../hooks/useUpdateWorkerData'
 import ModalInput from '../Dialog/ModalInput'
@@ -8,24 +9,32 @@ import { useWorkerData } from '@/src/hooks/useWorkerData'
 import { useMainStore } from '@/src/stores/useMainStore'
 import AcceptButton from '../AcceptButton'
 import { useToastStore } from '@/src/stores/toastStore'
+import { useRequest } from '@/src/hooks/useRequest'
 
 interface WorkerSettingProps {
+  telegramIdReq: string
+  nameReq: string
   workerId: string
 }
 
-const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
+const WorkerSetting = ({
+  nameReq,
+  workerId,
+  telegramIdReq,
+}: WorkerSettingProps) => {
   //const toast = useToastStore((s) => s.toast)
   const { toast } = useToastStore()
+  const { deleteRequest } = useRequest()
   const [nameModalOpen, setNameModalOpen] = useState(false)
   const [telegramIdModalOpen, setTelegramIdModalOpen] = useState(false)
-  const [name, setName] = useState('')
-  const [telegramId, setTelegramId] = useState('')
+  const [name, setName] = useState(nameReq)
+  const [telegramId, setTelegramId] = useState(telegramIdReq)
   const [color, setColor] = useState('#0070F3')
   const [colorPickerModalOpen, setColorPickerModalOpen] = useState(false)
   const { mainData } = useMainStore()
-  const [nameInput, setNameInput] = useState('')
-  const [telegraIdInput, setTelegramIdInput] = useState('')
-  const { updateColor, updateName, createWorker, deleteWorker } =
+  const [nameInput, setNameInput] = useState(nameReq)
+  const [telegraIdInput, setTelegramIdInput] = useState(telegramIdReq)
+  const { updateColor, updateName, createWorker, deleteWorker, updateAccess } =
     useUpdateWorkerData()
   const [loading, setLoading] = useState(false)
   const {
@@ -62,6 +71,12 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
   const handleDeleteWorker = async (workerId: string) => {
     await deleteWorker(workerId)
     toast(name + ' удален')
+    router.back()
+  }
+
+  const handleDeleteRequest = async () => {
+    await deleteRequest(telegramIdReq)
+    toast('Запрос ' + nameReq + ' удален')
     router.back()
   }
 
@@ -110,6 +125,18 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
       setNameModalOpen(false)
     }
   }
+
+  const handleAccecUpdate = async (accessId: number) => {
+    if (worker) {
+      setLoading(true)
+      await updateAccess(accessId, worker.id)
+      await getWorkerData(worker.id)
+      setNameModalOpen(false)
+      setLoading(false)
+      toast('Доступ обновлен')
+    }
+  }
+
   const handleTelegramIdUpdate = async (telegramId: string) => {
     setTelegramId(telegramId)
     if (worker) {
@@ -135,7 +162,12 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
       toast('Введите TelegramID')
       return
     }
+
+    if (telegramIdReq !== '' && nameReq !== '' && workerId === 'new') {
+      await deleteRequest(telegramIdReq)
+    }
     await createWorker(name, color, '0', telegramId)
+
     toast(name + ' создан')
     router.back()
   }
@@ -244,7 +276,15 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
         ) : (
           <button
             onClick={() => {
-              handleDeleteWorker(workerId)
+              if (
+                telegramIdReq !== '' &&
+                nameReq !== '' &&
+                workerId === 'new'
+              ) {
+                handleDeleteRequest()
+              } else {
+                handleDeleteWorker(workerId)
+              }
             }}
             className="bg-white px-4 h-full w-fit rounded-[6px] justify-self-end"
           >
@@ -261,7 +301,11 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
         >
           <div className=" ">Отображаемое имя</div>
           <div className="flex flex-row h-full items-center text-white">
-            {name === '' ? (
+            {workerId === 'new' || workerDataLoaded ? (
+              <div className="me-2 flex items-center justify-center">
+                {name}
+              </div>
+            ) : (
               <img
                 className="me-2"
                 src="/dot_loader.svg"
@@ -269,10 +313,6 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
                 width={56}
                 height={36}
               />
-            ) : (
-              <div className="me-2 flex items-center justify-center">
-                {name}
-              </div>
             )}
             <div className=" ">{' >'}</div>
           </div>
@@ -286,7 +326,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
         >
           <div className=" ">Цвет в расписании</div>
           <div className="flex flex-row h-full items-center">
-            {workerDataLoaded ? (
+            {workerId === 'new' || workerDataLoaded ? (
               <div
                 style={{
                   background: color,
@@ -317,7 +357,7 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
         >
           <div className=" ">TelegramID</div>
           <div className="flex flex-row h-full items-center text-white">
-            {workerDataLoaded ? (
+            {workerId === 'new' || workerDataLoaded ? (
               <div className="me-2 flex items-center justify-center">
                 {telegramId}
               </div>
@@ -334,6 +374,32 @@ const WorkerSetting = ({ workerId }: WorkerSettingProps) => {
             <div className=" ">{' >'}</div>
           </div>
         </div>
+        {mainData?.user.access_id === 1 && workerId !== 'new' && (
+          <div className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px]">
+            <div className=" ">Администратор</div>
+            <div className="flex flex-row h-full items-center text-white">
+              {workerDataLoaded || loading ? (
+                <input
+                  className="size-8"
+                  type="checkbox"
+                  checked={worker?.access_id === 1}
+                  onChange={(e) => {
+                    handleAccecUpdate(e.target.checked ? 1 : 0)
+                  }}
+                />
+              ) : (
+                <img
+                  className="me-2"
+                  src="/dot_loader.svg"
+                  alt="Загрузка"
+                  width={56}
+                  height={36}
+                />
+              )}
+            </div>
+          </div>
+        )}
+
         {mainData?.user.access_id === 1 && workerId !== 'new' && (
           <div>
             {workerDataLoaded === false ? (

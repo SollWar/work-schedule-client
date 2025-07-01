@@ -11,6 +11,22 @@ export function getFirstWeekdayOfMonth(year: number, month: number): number {
   return day === 0 ? 7 : day // Воскресенье становится 7
 }
 
+export const formatPostgresDate = (dateString: string): string => {
+  const date = new Date(dateString) // Преобразуем строку в Date
+
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  })
+    .format(date)
+    .replace(',', '') // Убираем запятую для ru-RU
+}
+
 /// Генерация числа в диапозоне от min до max
 export function getRandomInt(min: number, max: number) {
   min = Math.ceil(min)
