@@ -42,3 +42,4 @@ next-env.d.ts
 
 # docker
 new-schedule.tar
+.new-schedule.tar
