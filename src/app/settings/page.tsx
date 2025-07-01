@@ -93,7 +93,7 @@ const SettingsPage = () => {
                 <div
                   onClick={() => {
                     router.push(
-                      `/worker?id=new&tid=${request.telegram_id}&wname=${request.worker_name}`
+                      `/settings/worker?id=new&tid=${request.telegram_id}&wname=${request.worker_name}`
                     )
                   }}
                   key={request.telegram_id}

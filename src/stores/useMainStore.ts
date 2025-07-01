@@ -17,17 +17,29 @@ export const useMainStore = create<MainStoreState>((set, get) => ({
   telegramId: '',
   initData() {
     const currMainData = get().mainData
+    const user: Worker = currMainData?.user ?? {
+      id: '0',
+      name: 'null',
+      color: 'null',
+      access_id: 1,
+    }
     if (currMainData) {
       if (currMainData.availableWorkplaces.length > 1) {
         return { selected: currMainData.availableWorkers[0], type: 'worker' }
-      } else
+      } else if (currMainData.availableWorkplaces.length > 0) {
         return {
           selected: currMainData.availableWorkplaces[0],
           type: 'workplace',
         }
+      } else {
+        return {
+          selected: user,
+          type: 'workplace',
+        }
+      }
     } else
       return {
-        selected: { id: '0', name: 'null', color: 'null' },
+        selected: user,
         type: 'workplace',
       }
   },
