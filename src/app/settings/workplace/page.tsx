@@ -1,6 +1,6 @@
 'use client'
-import WorkplaceComponent from './WorkplaceComponent'
 import { Suspense } from 'react'
+import WorkplaceComponent from './components/WorkplaceComponent'
 
 const WorkplacePage = () => {
   return (

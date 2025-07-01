@@ -1,6 +1,6 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
-import WorkerSetting from '../settings/components/Setting/WorkerSetting'
+import WorkerSetting from './WorkerSetting'
 
 const WorkerComponent = () => {
   const searchParams = useSearchParams()

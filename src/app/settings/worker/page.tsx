@@ -1,6 +1,6 @@
 'use client'
 import { Suspense } from 'react'
-import WorkerComponent from './WorkerComponent'
+import WorkerComponent from './components/WorkerComponent'
 
 const WorkerPage = () => {
   return (

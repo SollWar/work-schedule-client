@@ -14,6 +14,9 @@ export const useToastStore = create<ToastState>((set, get) => ({
   timeoutId: null,
 
   toast: (message, duration = 1500) => {
+    if (get().message) {
+      set({ show: false })
+    }
     const { timeoutId } = get()
     if (timeoutId) clearTimeout(timeoutId)
 

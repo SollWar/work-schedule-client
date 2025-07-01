@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react'
-import { useUpdateWorkerData } from '../../hooks/useUpdateWorkerData'
-import ModalInput from '../Dialog/ModalInput'
-import ModalColorPicker from '../Dialog/ModalColorPicker'
+import { useUpdateWorkerData } from '../hooks/useUpdateWorkerData'
+import ModalInput from '../../components/Modals/ModalInput'
+import ModalColorPicker from '../../components/Modals/ModalColorPicker'
 import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { useRouter } from 'next/navigation'
 import { useWorkerData } from '@/src/hooks/useWorkerData'
 import { useMainStore } from '@/src/stores/useMainStore'
-import AcceptButton from '../AcceptButton'
+import AcceptButton from '../../components/AcceptButton'
 import { useToastStore } from '@/src/stores/toastStore'
 import { useRequest } from '@/src/hooks/useRequest'
 
@@ -271,9 +271,7 @@ const WorkerSetting = ({
         <div className="ms-4 text-xl w-fit font-semibold justify-self-center">
           Настройки
         </div>
-        {worker?.id === mainData?.user.id ? (
-          <div></div>
-        ) : (
+        {(workerId !== 'new' || telegramIdReq !== '') && (
           <button
             onClick={() => {
               if (

@@ -6,17 +6,17 @@ import { useEffect, useState } from 'react'
 import { useGetData } from './hooks/useGetData'
 import { useRequest } from '@/src/hooks/useRequest'
 import { formatPostgresDate } from '@/src/utils/dateUtils'
+import { useSettingStore } from '@/src/stores/useSettingStore'
 
 //const accessType = ['Обычный', 'Админ']
 
 const SettingsPage = () => {
+  const { requestsListOpen, workersListOpen, workplacesListOpen, setListOpen } =
+    useSettingStore()
   const { getWorkers, getWorkplaces, workers, workplaces } = useGetData()
   const { requests, requestsAvailable, getRequests } = useRequest()
   const { mainData } = useMainStore()
   const [accessId, setAccessId] = useState(0)
-  const [requestsListOpen, setRequestListOpen] = useState(true)
-  const [workersListOpen, setWorkersListOpen] = useState(true)
-  const [workplacesListOpen, setWorkplacesListOpen] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -24,12 +24,12 @@ const SettingsPage = () => {
       router.replace('/')
     } else {
       if (mainData.user.access_id !== 1) {
-        router.replace(`/worker?id=${mainData.user.id}`)
+        router.replace(`/settings/worker?id=${mainData.user.id}`)
       }
       setAccessId(mainData.user.access_id)
-      getRequests()
-      getWorkers()
-      getWorkplaces()
+      if (requestsListOpen) getRequests()
+      if (workersListOpen) getWorkers()
+      if (workplacesListOpen) getWorkplaces()
     }
   }, [])
 
@@ -59,7 +59,7 @@ const SettingsPage = () => {
               if (!requestsListOpen) {
                 getRequests()
               }
-              setRequestListOpen(!requestsListOpen)
+              setListOpen('requestsListOpen', !requestsListOpen)
             }}
             className={
               'mx-2 mt-1 py-3 px-2 flex flex-row items-center justify-between rounded-[6px] cursor-pointer ' +
@@ -68,7 +68,7 @@ const SettingsPage = () => {
           >
             <div className="text-white">Список запросов</div>
             <div className="flex flex-row h-full items-center text-gray-300">
-              <div className="me-4 flex items-center justify-center">
+              <div className="flex items-center justify-center">
                 {requestsListOpen ? 'Закрыть' : 'Открыть'}
               </div>
             </div>
@@ -110,7 +110,7 @@ const SettingsPage = () => {
               if (!workersListOpen) {
                 getWorkers()
               }
-              setWorkersListOpen(!workersListOpen)
+              setListOpen('workersListOpen', !workersListOpen)
             }}
             className={
               'mx-2 mt-1 py-3 px-2 flex flex-row items-center justify-between rounded-[6px] cursor-pointer ' +
@@ -119,7 +119,7 @@ const SettingsPage = () => {
           >
             <div className="text-white">Список пользователей</div>
             <div className="flex flex-row h-full items-center text-gray-300">
-              <div className="me-4 flex items-center justify-center">
+              <div className="flex items-center justify-center">
                 {workersListOpen ? 'Закрыть' : 'Открыть'}
               </div>
             </div>
@@ -139,7 +139,7 @@ const SettingsPage = () => {
               workers.map((worker) => (
                 <div
                   onClick={() => {
-                    router.push(`/worker?id=${worker.id}`)
+                    router.push(`/settings/worker?id=${worker.id}`)
                   }}
                   key={worker.id}
                   className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white"
@@ -151,7 +151,7 @@ const SettingsPage = () => {
             )}
             <div
               onClick={() => {
-                router.push(`/worker?id=${'new'}`)
+                router.push(`/settings/worker?id=${'new'}`)
               }}
               key={'workplace new'}
               className="mt-1 ms-4 py-2 px-1 bg-white border-2 border-[#2B7FFF] rounded-[6px] text-black"
@@ -164,16 +164,16 @@ const SettingsPage = () => {
               if (!workplacesListOpen) {
                 getWorkplaces()
               }
-              setWorkplacesListOpen(!workplacesListOpen)
+              setListOpen('workplacesListOpen', !workplacesListOpen)
             }}
             className={
-              'mx-2 mt-2 py-3 px-2 flex flex-row items-center justify-between rounded-[6px] cursor-pointer ' +
+              'mx-2 mt-1 py-3 px-2 flex flex-row items-center justify-between rounded-[6px] cursor-pointer ' +
               (accessId === 1 ? 'bg-[#2B7FFF]' : 'bg-[#747475]')
             }
           >
             <div className="text-white">Список магазинов</div>
             <div className="flex flex-row h-full items-center text-gray-300">
-              <div className="me-4 flex items-center justify-center">
+              <div className="flex items-center justify-center">
                 {workplacesListOpen ? 'Закрыть' : 'Открыть'}
               </div>
             </div>
@@ -193,7 +193,7 @@ const SettingsPage = () => {
               workplaces.map((workplace) => (
                 <div
                   onClick={() => {
-                    router.push(`/workplace?id=${workplace.id}`)
+                    router.push(`/settings/workplace?id=${workplace.id}`)
                   }}
                   key={workplace.id}
                   className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white"
@@ -205,7 +205,7 @@ const SettingsPage = () => {
             )}
             <div
               onClick={() => {
-                router.push(`/workplace?id=${'new'}`)
+                router.push(`/settings/workplace?id=${'new'}`)
               }}
               key={'workplace new'}
               className="mt-1 ms-4 py-2 px-1 bg-white border-2 border-[#2B7FFF] rounded-[6px] text-black"

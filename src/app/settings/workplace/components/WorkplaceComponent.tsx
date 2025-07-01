@@ -1,5 +1,5 @@
 import { useSearchParams } from 'next/navigation'
-import WorkplaceSetting from '../settings/components/Setting/WorkplaceSetting'
+import WorkplaceSetting from './WorkplaceSetting'
 
 const WorkplaceComponent = () => {
   const searchParams = useSearchParams()
