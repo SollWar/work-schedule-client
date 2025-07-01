@@ -4,10 +4,9 @@ import { Request } from '../types/Request'
 
 export const useRequest = () => {
   const [requests, setRequests] = useState<Request[]>([])
-  const [requestsAvailable, setRequestsAvailable] = useState<boolean | null>(
-    null
-  )
+  const [requestsAvailable, setRequestsAvailable] = useState<boolean>(false)
   const getRequests = async () => {
+    setRequestsAvailable(false)
     const response = await fetchTyped<Request[]>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/request/all`,
       {
@@ -15,7 +14,7 @@ export const useRequest = () => {
       }
     )
 
-    setRequestsAvailable(!(response.length === 0))
+    setRequestsAvailable(true)
     setRequests(response)
   }
   const deleteRequest = async (telegramId: string) => {

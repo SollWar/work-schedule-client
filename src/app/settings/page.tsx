@@ -83,11 +83,11 @@ const SettingsPage = () => {
             }}
           >
             {!requestsAvailable ? (
+              <div className="h-[40px] mt-1 ms-4 py-2 px-2 rounded-[6px] text-white bg-slate-300 animate-pulse" />
+            ) : requests.length === 0 ? (
               <div className="h-[40px] mt-1 ms-4 py-2 px-2 rounded-[6px] text-white bg-[gray]">
                 Запросов нет
               </div>
-            ) : requests.length === 0 ? (
-              <div className="h-[40px] mt-1 ms-4 py-2 px-2 rounded-[6px] text-white bg-slate-300 animate-pulse" />
             ) : (
               requests.map((request) => (
                 <div
