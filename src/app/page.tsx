@@ -3,14 +3,14 @@
 import { useEffect, useState } from 'react'
 import { Calendar } from '../components/Calendar/Calendar'
 import { TopBar } from '../components/TopBar/TopBar'
-import { useMainStore } from '../stores/useMainStore'
+import { useMainStore } from '../stores/mainStore'
 import { useSystemTheme } from '../hooks/useSystemTheme'
 import styles from './page.module.css'
 import { useTelegramAuth } from '../hooks/useTelegramAuth'
-import { useThemeStore } from '../stores/useThemeStore'
+import { useThemeStore } from '../stores/themeStore'
 import { useToastStore } from '../stores/toastStore'
 import RequestPage from './components/RequestPage/RequestPage'
-import { useScheduleStore } from '../stores/useScheduleStore'
+import { useScheduleStore } from '../stores/scheduleStore'
 import AdminCalendar from '../components/AdminCalendar/AdminCalendar'
 
 export default function Home() {

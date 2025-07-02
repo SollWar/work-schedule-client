@@ -6,7 +6,7 @@ import ModalColorPicker from '../../components/Modals/ModalColorPicker'
 import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { useRouter } from 'next/navigation'
 import { useWorkerData } from '@/src/hooks/useWorkerData'
-import { useMainStore } from '@/src/stores/useMainStore'
+import { useMainStore } from '@/src/stores/mainStore'
 import AcceptButton from '../../components/AcceptButton'
 import { useToastStore } from '@/src/stores/toastStore'
 import { useRequest } from '@/src/hooks/useRequest'
@@ -48,6 +48,7 @@ const WorkerSetting = ({
     notUpdateWorkplace,
     doUpdateWorkplace,
     workerDataLoaded,
+    workerTelegramId,
   } = useWorkerData()
   const router = useRouter()
 
@@ -62,6 +63,8 @@ const WorkerSetting = ({
     if (worker) {
       setNameInput(worker.name)
       setName(worker.name)
+      setTelegramId(workerTelegramId)
+      setTelegramIdInput(workerTelegramId)
       setColor(worker.color)
     } else {
       setNameInput('')
@@ -349,9 +352,12 @@ const WorkerSetting = ({
         </div>
         <div
           onClick={() => {
-            setTelegramIdModalOpen(true)
+            if (workerId === 'new') setTelegramIdModalOpen(true)
           }}
-          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px]"
+          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between rounded-[6px]"
+          style={{
+            background: workerId === 'new' ? '#2B7FFF' : 'gray',
+          }}
         >
           <div className=" ">TelegramID</div>
           <div className="flex flex-row h-full items-center text-white">

@@ -3,7 +3,7 @@ import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { BottomBarLoader } from './BottomBarLoader/BottomBarLoader'
 import { Worker } from '../../types/Worker'
 import { Workplace } from '@/src/types/Workplace'
-import { useScheduleStore } from '@/src/stores/useScheduleStore'
+import { useScheduleStore } from '@/src/stores/scheduleStore'
 
 interface BottomBarProps {
   entities: Worker[] | Workplace[]

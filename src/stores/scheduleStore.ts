@@ -2,7 +2,8 @@ import { create } from 'zustand'
 import { getDaysInMonth } from '../utils/dateUtils'
 import { Workplace } from '../types/Workplace'
 import { Worker } from '../types/Worker'
-import { ScheduleGetState } from '../hooks/useSchedule'
+import { ScheduleType } from '../types/Schedule'
+import { fetchSchedule } from '../utils/fetchSchedule'
 
 interface AdminSchedule {
   scheduleList: string[]
@@ -15,33 +16,21 @@ interface ScheduleStoreState {
   entities: Worker[] | Workplace[]
   currentSelected: Worker | Workplace | null
   isLoading: boolean
-  type: 'worker' | 'workplace'
+  type: ScheduleType
   schedule_id: string
   updatingSchedule: () => void
   setSchedule: (schedule: string[]) => void
   getSchedule: (
-    type: 'worker' | 'workplace',
+    type: ScheduleType,
     id: string,
     year: number,
-    month: number,
-    getScheduleState: (
-      type: 'worker' | 'workplace',
-      id: string,
-      year: number,
-      month: number
-    ) => Promise<ScheduleGetState>
+    month: number
   ) => void
   adminSchedule: AdminSchedule[]
   getAdminSchedule: (
     workplaces: Workplace[],
     year: number,
-    month: number,
-    getScheduleState: (
-      type: 'worker' | 'workplace',
-      id: string,
-      year: number,
-      month: number
-    ) => Promise<ScheduleGetState>
+    month: number
   ) => void
 }
 
@@ -62,7 +51,7 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
       scheduleList: schedule,
     }))
   },
-  async getAdminSchedule(workplaces, year, month, getScheduleState) {
+  async getAdminSchedule(workplaces, year, month) {
     const adminSchedule: AdminSchedule[] = []
     const adminSelected: Worker = {
       id: 'admin',
@@ -81,12 +70,7 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
 
     await Promise.all(
       workplaces.map(async (value) => {
-        const schedule = await getScheduleState(
-          'workplace',
-          value.id,
-          year,
-          month
-        )
+        const schedule = await fetchSchedule('workplace', value.id, year, month)
 
         if (schedule.schedule && schedule.entities && schedule.selected) {
           adminSchedule.push({
@@ -107,7 +91,7 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
       isLoading: false,
     })
   },
-  async getSchedule(type, id, year, month, getScheduleState) {
+  async getSchedule(type, id, year, month) {
     set({
       isLoading: true,
       scheduleList: [],
@@ -117,7 +101,7 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
     })
     if (type === 'worker') {
       try {
-        const { schedule, selected, entities } = await getScheduleState(
+        const { schedule, selected, entities } = await fetchSchedule(
           type,
           id,
           year,
@@ -148,7 +132,7 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
       }
     } else if (type === 'workplace') {
       try {
-        const { schedule, selected, entities } = await getScheduleState(
+        const { schedule, selected, entities } = await fetchSchedule(
           type,
           id,
           year,

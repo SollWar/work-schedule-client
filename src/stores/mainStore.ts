@@ -3,11 +3,12 @@ import fetchTyped from '../utils/fetchTyped'
 import { MainData } from '../types/MainData'
 import { Workplace } from '../types/Workplace'
 import { Worker } from '../types/Worker'
+import { ScheduleType } from '../types/Schedule'
 
 interface MainStoreState {
   mainData: MainData | null
   telegramId: string
-  initData: () => { selected: Worker | Workplace; type: 'worker' | 'workplace' }
+  initData: () => { selected: Worker | Workplace; type: ScheduleType }
   mainStoreInit: () => void
   setTelegramId: (telegramId: string) => void
 }

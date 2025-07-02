@@ -4,3 +4,5 @@ export interface Schedule {
   month: number
   schedule: string
 }
+
+export type ScheduleType = 'worker' | 'workplace' | 'admin'

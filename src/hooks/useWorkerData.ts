@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Worker } from '../types/Worker'
 import fetchTyped from '../utils/fetchTyped'
-import { useMainStore } from '../stores/useMainStore'
+import { useMainStore } from '../stores/mainStore'
 import { Workplace, WorkplaceForSetting } from '../types/Workplace'
 import { useGetData } from '../app/settings/hooks/useGetData'
 import { useUpdateWorkerData } from '../app/settings/worker/hooks/useUpdateWorkerData'
 
 export const useWorkerData = () => {
   const [worker, setWorker] = useState<Worker>()
+  const [workerTelegramId, setWorkerTelegramId] = useState('')
   const [workerDataLoaded, setWorkerDataLoaded] = useState(false)
   const { updateWorkplace } = useUpdateWorkerData()
   const [workplaces, setWorkplaces] = useState<Workplace[]>([])
@@ -87,14 +88,23 @@ export const useWorkerData = () => {
   }
 
   const getWorkerData = async (workerId: string | null) => {
-    const response = await fetchTyped<Worker>(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker?id=${workerId}`,
-      {
-        method: 'GET',
-      }
-    )
-    setWorker(response)
-    if (response.id === mainData?.user.id) {
+    const [worker, telegramId] = await Promise.all([
+      fetchTyped<Worker>(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker?id=${workerId}`,
+        {
+          method: 'GET',
+        }
+      ),
+      fetchTyped<string>(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/telegram?id=${workerId}`,
+        {
+          method: 'GET',
+        }
+      ),
+    ])
+    setWorker(worker)
+    setWorkerTelegramId(telegramId)
+    if (worker.id === mainData?.user.id) {
       mainStoreInit()
     }
   }
@@ -123,5 +133,6 @@ export const useWorkerData = () => {
     doUpdateWorkplace,
     updateMode,
     workerDataLoaded,
+    workerTelegramId,
   }
 }

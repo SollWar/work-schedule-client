@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useMainStore } from '../stores/useMainStore'
+import { useMainStore } from '../stores/mainStore'
 import { TelegramAuth } from '../types/Worker'
 import fetchTyped from '../utils/fetchTyped'
 

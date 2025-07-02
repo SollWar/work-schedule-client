@@ -1,6 +1,6 @@
 'use client'
 import { useDateDropDown } from '@/src/hooks/useDateDropDown'
-import { useScheduleStore } from '@/src/stores/useScheduleStore'
+import { useScheduleStore } from '@/src/stores/scheduleStore'
 import { MONTH } from '@/src/utils/dateUtils'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 

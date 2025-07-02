@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 import { useRouter } from 'next/navigation'
-import { useMainStore } from '../../stores/useMainStore'
+import { useMainStore } from '../../stores/mainStore'
 import { useEffect, useState } from 'react'
 import { useGetData } from './hooks/useGetData'
 import { useRequest } from '@/src/hooks/useRequest'
 import { formatPostgresDate } from '@/src/utils/dateUtils'
-import { useSettingStore } from '@/src/stores/useSettingStore'
+import { useSettingStore } from '@/src/stores/settingStore'
 
 //const accessType = ['Обычный', 'Админ']
 

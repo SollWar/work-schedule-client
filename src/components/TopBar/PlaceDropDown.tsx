@@ -3,16 +3,15 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { Worker } from '../../types/Worker'
 import { Workplace } from '../../types/Workplace'
 import { useEffect, useState } from 'react'
-import { useMainStore } from '@/src/stores/useMainStore'
-import { useScheduleStore } from '@/src/stores/useScheduleStore'
-import { useDateStore } from '@/src/stores/useDateStore'
-import { useSchedule } from '@/src/hooks/useSchedule'
+import { useMainStore } from '@/src/stores/mainStore'
+import { useScheduleStore } from '@/src/stores/scheduleStore'
+import { useDateStore } from '@/src/stores/dateStore'
+import { ScheduleType } from '@/src/types/Schedule'
 
 export const PlaceDropDown = () => {
   const { mainData, initData } = useMainStore()
   const { getSchedule, getAdminSchedule, type, currentSelected } =
     useScheduleStore()
-  const { getScheduleState } = useSchedule()
   const { year, month, currentMonth, currentYear } = useDateStore()
   const [selected, setSelected] = useState<Worker | Workplace>()
   const adminSelected: Worker = {
@@ -22,8 +21,8 @@ export const PlaceDropDown = () => {
     access_id: 0,
   }
 
-  const selectWork = (type: 'worker' | 'workplace', id: string) => {
-    getSchedule(type, id, year, month, getScheduleState)
+  const selectWork = (type: ScheduleType, id: string) => {
+    getSchedule(type, id, year, month)
   }
 
   useEffect(() => {
@@ -38,20 +37,13 @@ export const PlaceDropDown = () => {
         if (mainData.user.access_id !== 1) {
           const curInitData = initData()
           setSelected(curInitData.selected)
-          getSchedule(
-            curInitData.type,
-            curInitData.selected.id,
-            year,
-            month,
-            getScheduleState
-          )
+          getSchedule(curInitData.type, curInitData.selected.id, year, month)
         } else {
           setSelected(adminSelected)
           getAdminSchedule(
             mainData.availableWorkplaces,
             currentYear,
-            currentMonth,
-            getScheduleState
+            currentMonth
           )
         }
       } else if (currentSelected) {
@@ -60,11 +52,10 @@ export const PlaceDropDown = () => {
           getAdminSchedule(
             mainData.availableWorkplaces,
             currentYear,
-            currentMonth,
-            getScheduleState
+            currentMonth
           )
         } else {
-          getSchedule(type, currentSelected.id, year, month, getScheduleState)
+          getSchedule(type, currentSelected.id, year, month)
         }
       }
     }
@@ -84,8 +75,7 @@ export const PlaceDropDown = () => {
                 getAdminSchedule(
                   mainData.availableWorkplaces,
                   currentYear,
-                  currentMonth,
-                  getScheduleState
+                  currentMonth
                 )
               }}
               className="px-4 py-2 cursor-pointer"

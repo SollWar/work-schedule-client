@@ -1,12 +1,9 @@
 import { useState } from 'react'
 import fetchTyped from '../utils/fetchTyped'
-import { useScheduleStore } from '../stores/useScheduleStore'
-import { useCounterStore } from '../stores/useCounterStore'
-import { useSchedule } from './useSchedule'
+import { useScheduleStore } from '../stores/scheduleStore'
+import { ScheduleType } from '../types/Schedule'
 
 export const useScheduleEditable = () => {
-  const { calcCounter } = useCounterStore()
-  const { getScheduleState } = useSchedule()
   const { getSchedule, scheduleList, updatingSchedule } = useScheduleStore()
   const [newSchedule, setNewSchedule] = useState<string[]>(() => [
     ...scheduleList,
@@ -26,11 +23,10 @@ export const useScheduleEditable = () => {
 
   const cancelEditing = () => {
     setNewSchedule([...scheduleList])
-    calcCounter(scheduleList)
   }
 
   const saveChanges = async (
-    type: 'worker' | 'workplace',
+    type: ScheduleType,
     id: string,
     year: number,
     month: number
@@ -53,7 +49,7 @@ export const useScheduleEditable = () => {
       }
     )
     if (response) {
-      getSchedule(type, id, year, month, getScheduleState)
+      getSchedule(type, id, year, month)
     }
   }
 
