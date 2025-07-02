@@ -10,6 +10,8 @@ import { useTelegramAuth } from '../hooks/useTelegramAuth'
 import { useThemeStore } from '../stores/useThemeStore'
 import { useToastStore } from '../stores/toastStore'
 import RequestPage from './components/RequestPage/RequestPage'
+import { useScheduleStore } from '../stores/useScheduleStore'
+import AdminCalendar from '../components/AdminCalendar/AdminCalendar'
 
 export default function Home() {
   useSystemTheme()
@@ -17,6 +19,7 @@ export default function Home() {
   const { themeConst } = useThemeStore()
   const { mainData, mainStoreInit, telegramId } = useMainStore()
   const { telegramInitData } = useTelegramAuth()
+  const { currentSelected } = useScheduleStore()
   const [loading, setLoading] = useState(mainData === null)
 
   useEffect(() => {
@@ -59,7 +62,7 @@ export default function Home() {
       <div className={`bg-[${themeConst.background}]`}>
         <TopBar />
         <div className={'px-1'}>
-          <Calendar />
+          {currentSelected?.id === 'admin' ? <AdminCalendar /> : <Calendar />}
         </div>
       </div>
     )

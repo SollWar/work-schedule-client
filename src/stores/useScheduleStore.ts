@@ -1,9 +1,14 @@
 import { create } from 'zustand'
-import fetchTyped from '../utils/fetchTyped'
-import { Schedule } from '../types/Schedule'
 import { getDaysInMonth } from '../utils/dateUtils'
 import { Workplace } from '../types/Workplace'
 import { Worker } from '../types/Worker'
+import { ScheduleGetState } from '../hooks/useSchedule'
+
+interface AdminSchedule {
+  scheduleList: string[]
+  entities: Worker[]
+  selected: Workplace
+}
 
 interface ScheduleStoreState {
   scheduleList: string[]
@@ -18,7 +23,25 @@ interface ScheduleStoreState {
     type: 'worker' | 'workplace',
     id: string,
     year: number,
-    month: number
+    month: number,
+    getScheduleState: (
+      type: 'worker' | 'workplace',
+      id: string,
+      year: number,
+      month: number
+    ) => Promise<ScheduleGetState>
+  ) => void
+  adminSchedule: AdminSchedule[]
+  getAdminSchedule: (
+    workplaces: Workplace[],
+    year: number,
+    month: number,
+    getScheduleState: (
+      type: 'worker' | 'workplace',
+      id: string,
+      year: number,
+      month: number
+    ) => Promise<ScheduleGetState>
   ) => void
 }
 
@@ -29,6 +52,7 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
   isLoading: true,
   type: 'worker',
   schedule_id: '',
+  adminSchedule: [],
   updatingSchedule() {
     set({ isLoading: true, scheduleList: [], entities: [] })
   },
@@ -38,7 +62,52 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
       scheduleList: schedule,
     }))
   },
-  async getSchedule(type, id, year, month) {
+  async getAdminSchedule(workplaces, year, month, getScheduleState) {
+    const adminSchedule: AdminSchedule[] = []
+    const adminSelected: Worker = {
+      id: 'admin',
+      name: 'Все',
+      color: '',
+      access_id: 0,
+    }
+    set({
+      adminSchedule: [],
+      isLoading: true,
+      scheduleList: [],
+      entities: [],
+      schedule_id: '',
+      currentSelected: adminSelected,
+    })
+
+    await Promise.all(
+      workplaces.map(async (value) => {
+        const schedule = await getScheduleState(
+          'workplace',
+          value.id,
+          year,
+          month
+        )
+
+        if (schedule.schedule && schedule.entities && schedule.selected) {
+          adminSchedule.push({
+            scheduleList: schedule.schedule.schedule.split(','),
+            entities: schedule.entities as Worker[],
+            selected: schedule.selected as Workplace,
+          })
+        }
+      })
+    )
+
+    adminSchedule.sort((a, b) => a.selected.name.localeCompare(b.selected.name))
+
+    set({
+      schedule_id: 'admin',
+      adminSchedule: adminSchedule,
+      currentSelected: adminSelected,
+      isLoading: false,
+    })
+  },
+  async getSchedule(type, id, year, month, getScheduleState) {
     set({
       isLoading: true,
       scheduleList: [],
@@ -48,19 +117,14 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
     })
     if (type === 'worker') {
       try {
-        const [schedule, selected, entities] = await Promise.all([
-          fetchTyped<Schedule>(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/schedule/worker?worker_id=${id}&year=${year}&month=${month}`
-          ),
-          fetchTyped<Worker>(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/?id=${id}`
-          ),
-          fetchTyped<Workplace[]>(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/user?worker_id=${id}`
-          ),
-        ])
+        const { schedule, selected, entities } = await getScheduleState(
+          type,
+          id,
+          year,
+          month
+        )
 
-        if (schedule.schedule !== '') {
+        if (schedule && schedule?.schedule !== '') {
           set({
             schedule_id: id,
             scheduleList: schedule.schedule.split(','),
@@ -84,59 +148,32 @@ export const useScheduleStore = create<ScheduleStoreState>((set) => ({
       }
     } else if (type === 'workplace') {
       try {
-        const [schedules, selected, entities] = await Promise.all([
-          fetchTyped<Schedule[]>(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/schedule/workplace?workplace_id=${id}&year=${year}&month=${month}`
-          ),
-          fetchTyped<Workplace>(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/?id=${id}`
-          ),
-          fetchTyped<Workplace[]>(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/workplace?workplace_id=${id}`
-          ),
-        ])
-        const schedule: string[] = new Array(getDaysInMonth(year, month)).fill(
-          '0'
+        const { schedule, selected, entities } = await getScheduleState(
+          type,
+          id,
+          year,
+          month
         )
 
-        const daysInMonth = getDaysInMonth(year, month)
-        const scheduleMap = schedules.map((val) => ({
-          workerId: val.worker_id,
-          days: val.schedule.split(','),
-        }))
-
-        const conflictDays = new Set<number>()
-
-        for (let i = 0; i < daysInMonth; i++) {
-          let foundWorkerId: string | null = null
-          let hasConflict = false
-
-          for (const { workerId, days } of scheduleMap) {
-            if (days[i] !== '0' && days[i] === id) {
-              if (foundWorkerId === null) {
-                foundWorkerId = workerId
-              } else if (foundWorkerId !== workerId) {
-                hasConflict = true
-                break
-              }
-            }
-          }
-
-          if (hasConflict) {
-            conflictDays.add(i)
-            schedule[i] = 'X'
-          } else if (foundWorkerId) {
-            schedule[i] = foundWorkerId
-          }
+        if (schedule && schedule?.schedule !== '') {
+          set({
+            schedule_id: id,
+            scheduleList: schedule.schedule.split(','),
+            type: 'workplace',
+            entities: entities,
+            currentSelected: selected,
+            isLoading: false,
+          })
+        } else {
+          set({
+            schedule_id: id,
+            scheduleList: new Array(getDaysInMonth(year, month)).fill('0'),
+            type: 'workplace',
+            entities: entities,
+            currentSelected: selected,
+            isLoading: false,
+          })
         }
-        set({
-          schedule_id: id,
-          type: 'workplace',
-          entities: entities,
-          currentSelected: selected,
-          scheduleList: schedule,
-          isLoading: false,
-        })
       } catch {
         set({ isLoading: false })
       }

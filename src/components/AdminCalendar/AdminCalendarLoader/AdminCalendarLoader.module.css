@@ -1,0 +1,38 @@
+.main {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.card {
+  aspect-ratio: 6/9;
+  border-radius: 6px;
+  background: white;
+  transition: 0.4s ease-in-out, 0.2s background-color;
+  animation: 2s loading90 infinite;
+}
+
+/* Анимация для "черных" клеток (нечетные ряды) */
+.card:nth-child(4n + 1),
+.card:nth-child(4n + 4) {
+  animation-delay: 1s;
+}
+
+/* Анимация для "белых" клеток (четные ряды) */
+.card:nth-child(4n + 2),
+.card:nth-child(4n + 3) {
+  animation-delay: 0s;
+}
+
+@keyframes loading90 {
+  0% {
+    background: white;
+  }
+  50% {
+    background: #4caf50;
+  }
+  100% {
+    background: white;
+  }
+}

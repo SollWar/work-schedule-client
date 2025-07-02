@@ -5,6 +5,7 @@ interface DateStoreState {
   month: number
   currentYear: number
   currentMonth: number
+  currentDay: number
   changeDate: (params: { year?: number; month?: number }) => void
 }
 
@@ -15,6 +16,7 @@ export const useDateStore = create<DateStoreState>((set) => ({
   month: now.getMonth() + 1,
   currentYear: now.getFullYear(),
   currentMonth: now.getMonth() + 1,
+  currentDay: now.getDate(),
   changeDate(params) {
     set((prev) => ({
       ...prev,

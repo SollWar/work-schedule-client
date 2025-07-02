@@ -1,5 +1,6 @@
 'use client'
 import { useDateDropDown } from '@/src/hooks/useDateDropDown'
+import { useScheduleStore } from '@/src/stores/useScheduleStore'
 import { MONTH } from '@/src/utils/dateUtils'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 
@@ -10,10 +11,17 @@ interface DateDropDownProps {
 
 export const DateDropDown = ({ type, items }: DateDropDownProps) => {
   const { year, month, selectDate } = useDateDropDown(type)
+  const { currentSelected } = useScheduleStore()
 
   return (
     <DropdownMenu.Root modal={false}>
-      <DropdownMenu.Trigger className="bg-[#2B7FFF] text-white px-4 h-full flex items-center rounded-[6px] ms-1 focus:outline-none active:outline-none">
+      <DropdownMenu.Trigger
+        disabled={currentSelected?.id === 'admin'}
+        className="text-white px-4 h-full flex items-center rounded-[6px] ms-1 focus:outline-none active:outline-none"
+        style={{
+          background: currentSelected?.id === 'admin' ? 'gray' : '#2B7FFF',
+        }}
+      >
         {type === 'year' ? year : MONTH[month - 1]}
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>

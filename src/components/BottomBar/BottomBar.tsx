@@ -20,7 +20,7 @@ export const BottomBar = ({ counter }: BottomBarProps) => {
           !isLoading ? 'opacity-100' : 'opacity-50 pointer-events-none'
         }`}
       >
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-1">
           {entities.map((val, ind) => (
             <div
               key={ind}

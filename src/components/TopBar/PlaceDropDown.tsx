@@ -6,26 +6,66 @@ import { useEffect, useState } from 'react'
 import { useMainStore } from '@/src/stores/useMainStore'
 import { useScheduleStore } from '@/src/stores/useScheduleStore'
 import { useDateStore } from '@/src/stores/useDateStore'
+import { useSchedule } from '@/src/hooks/useSchedule'
 
 export const PlaceDropDown = () => {
   const { mainData, initData } = useMainStore()
-  const { getSchedule, type, currentSelected } = useScheduleStore()
-  const { year, month } = useDateStore()
+  const { getSchedule, getAdminSchedule, type, currentSelected } =
+    useScheduleStore()
+  const { getScheduleState } = useSchedule()
+  const { year, month, currentMonth, currentYear } = useDateStore()
   const [selected, setSelected] = useState<Worker | Workplace>()
+  const adminSelected: Worker = {
+    id: 'admin',
+    name: 'Все',
+    color: '',
+    access_id: 0,
+  }
 
   const selectWork = (type: 'worker' | 'workplace', id: string) => {
-    getSchedule(type, id, year, month)
+    getSchedule(type, id, year, month, getScheduleState)
   }
+
+  useEffect(() => {
+    if (currentSelected) {
+      setSelected(currentSelected)
+    }
+  }, [currentSelected])
 
   useEffect(() => {
     if (mainData) {
       if (!currentSelected) {
-        const curInitData = initData()
-        setSelected(curInitData.selected)
-        getSchedule(curInitData.type, curInitData.selected.id, year, month)
+        if (mainData.user.access_id !== 1) {
+          const curInitData = initData()
+          setSelected(curInitData.selected)
+          getSchedule(
+            curInitData.type,
+            curInitData.selected.id,
+            year,
+            month,
+            getScheduleState
+          )
+        } else {
+          setSelected(adminSelected)
+          getAdminSchedule(
+            mainData.availableWorkplaces,
+            currentYear,
+            currentMonth,
+            getScheduleState
+          )
+        }
       } else if (currentSelected) {
         setSelected(currentSelected)
-        getSchedule(type, currentSelected.id, year, month)
+        if (currentSelected.id === 'admin') {
+          getAdminSchedule(
+            mainData.availableWorkplaces,
+            currentYear,
+            currentMonth,
+            getScheduleState
+          )
+        } else {
+          getSchedule(type, currentSelected.id, year, month, getScheduleState)
+        }
       }
     }
   }, [])
@@ -37,6 +77,23 @@ export const PlaceDropDown = () => {
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content className="mt-1  bg-white rounded-[6px] border-1">
+          {mainData?.user.access_id === 1 && (
+            <DropdownMenu.Item
+              onClick={() => {
+                setSelected(adminSelected)
+                getAdminSchedule(
+                  mainData.availableWorkplaces,
+                  currentYear,
+                  currentMonth,
+                  getScheduleState
+                )
+              }}
+              className="px-4 py-2 cursor-pointer"
+              key={adminSelected.id}
+            >
+              {adminSelected.name}
+            </DropdownMenu.Item>
+          )}
           <div className="ps-1.5 text-[0.8rem] text-gray-500">Магазины </div>
           {mainData?.availableWorkplaces.map((val) => (
             <DropdownMenu.Item
