@@ -12,7 +12,7 @@ export default function RootLayout({
         <title>Расписание Типманов</title>
         <meta name="description" content="Расписание Типманов" />
       </head>
-      <body className="antialiased">
+      <body className="antialiased cursor-default">
         {children}
         <ToastProvider />
       </body>

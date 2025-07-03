@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react'
 import { useUpdateWorkerData } from '../hooks/useUpdateWorkerData'
-import ModalInput from '../../components/Modals/ModalInput'
-import ModalColorPicker from '../../components/Modals/ModalColorPicker'
+import ModalInput from '../../../components/Modals/ModalInput'
+import ModalColorPicker from '../../../components/Modals/ModalColorPicker'
 import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { useRouter } from 'next/navigation'
 import { useWorkerData } from '@/src/hooks/useWorkerData'
 import { useMainStore } from '@/src/stores/mainStore'
-import AcceptButton from '../../components/AcceptButton'
+import AcceptButton from '../../../components/AcceptButton'
 import { useToastStore } from '@/src/stores/toastStore'
 import { useRequest } from '@/src/hooks/useRequest'
 
@@ -24,19 +24,32 @@ const WorkerSetting = ({
 }: WorkerSettingProps) => {
   //const toast = useToastStore((s) => s.toast)
   const { toast } = useToastStore()
+  const [componentState, setComponentState] = useState({
+    name: nameReq,
+    color: '#0070F3',
+    telegramId: telegramIdReq,
+    loading: false,
+    modals: {
+      name: false,
+      color: false,
+      telegramId: false,
+    },
+    input: {
+      name: nameReq,
+      telegramId: telegramIdReq,
+      acces: 0,
+      color: '#0070F3',
+    },
+  })
+  const [tapTo, setTapTo] = useState({
+    del: 0,
+    acces: 0,
+  })
+
   const { deleteRequest } = useRequest()
-  const [nameModalOpen, setNameModalOpen] = useState(false)
-  const [telegramIdModalOpen, setTelegramIdModalOpen] = useState(false)
-  const [name, setName] = useState(nameReq)
-  const [telegramId, setTelegramId] = useState(telegramIdReq)
-  const [color, setColor] = useState('#0070F3')
-  const [colorPickerModalOpen, setColorPickerModalOpen] = useState(false)
   const { mainData } = useMainStore()
-  const [nameInput, setNameInput] = useState(nameReq)
-  const [telegraIdInput, setTelegramIdInput] = useState(telegramIdReq)
   const { updateColor, updateName, createWorker, deleteWorker, updateAccess } =
     useUpdateWorkerData()
-  const [loading, setLoading] = useState(false)
   const {
     worker,
     workplacesForSetting,
@@ -60,21 +73,60 @@ const WorkerSetting = ({
   }, [])
 
   useEffect(() => {
-    if (worker) {
-      setNameInput(worker.name)
-      setName(worker.name)
-      setTelegramId(workerTelegramId)
-      setTelegramIdInput(workerTelegramId)
-      setColor(worker.color)
+    if (worker && workerTelegramId) {
+      setComponentState((prev) => ({
+        ...prev,
+        name: worker.name,
+        telegramId: workerTelegramId,
+        color: worker.color,
+        input: {
+          ...prev.input,
+          name: worker.name,
+          telegramId: workerTelegramId,
+        },
+      }))
     } else {
-      setNameInput('')
+      setComponentState((prev) => ({
+        ...prev,
+        input: {
+          ...prev.input,
+          name: '',
+        },
+      }))
     }
-  }, [worker])
+  }, [worker, workerTelegramId])
 
-  const handleDeleteWorker = async (workerId: string) => {
-    await deleteWorker(workerId)
-    toast(name + ' удален')
-    router.back()
+  const doModalVisibility = (
+    type: 'name' | 'color' | 'telegramId',
+    visibility: boolean
+  ) => {
+    setComponentState((prev) => ({
+      ...prev,
+      modals: {
+        ...prev.modals,
+        [type]: visibility,
+      },
+    }))
+  }
+
+  const doDeleteWorker = async (workerId: string) => {
+    if (tapTo.del + 1 === 2) {
+      await deleteWorker(workerId)
+      toast(componentState.name + ' удален')
+      router.back()
+    } else {
+      toast('Нажмите еще раз для удаления')
+      setTapTo((prev) => ({
+        ...prev,
+        del: tapTo.del++,
+      }))
+      setTimeout(() => {
+        setTapTo((prev) => ({
+          ...prev,
+          del: 0,
+        }))
+      }, 2000)
+    }
   }
 
   const handleDeleteRequest = async () => {
@@ -91,64 +143,80 @@ const WorkerSetting = ({
     updateWorkplaceEnabled(id, enabled)
   }
 
-  const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNameInput(e.target.value)
-  }
-
-  const handleTelegramIdInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+  const doWorkerUpdate = async (
+    type: 'color' | 'name' | 'telegramId' | 'acces',
+    value: string | number
   ) => {
-    setTelegramIdInput(e.target.value)
-  }
-
-  const handleColorUpdate = async (color: string) => {
-    setColor(color)
+    console.log(type, value)
+    setComponentState((prev) => ({
+      ...prev,
+      loading: true,
+      [type]: value,
+    }))
     if (worker) {
-      setLoading(true)
-      await updateColor(color, worker.id)
-      await getWorkerData(worker.id)
-      setLoading(true)
-      setColorPickerModalOpen(false)
-      toast('Цвет обновлен')
-    } else {
-      setColorPickerModalOpen(false)
+      switch (type) {
+        case 'color': {
+          await updateColor(value as string, worker.id)
+          await getWorkerData(worker.id)
+          toast('Цвет обновлен')
+          break
+        }
+        case 'name': {
+          await updateName(value as string, worker.id)
+          await getWorkerData(worker.id)
+          toast('Имя обновлено')
+          break
+        }
+        case 'acces': {
+          if (tapTo.acces + 1 === 2) {
+            await updateAccess(value as number, worker.id)
+            await getWorkerData(worker.id)
+            toast('Доступ обновлен')
+          } else {
+            toast('Нажмите еще раз что-бы изменить доступ')
+            setTapTo((prev) => ({
+              ...prev,
+              acces: tapTo.acces++,
+            }))
+            setTimeout(() => {
+              setTapTo((prev) => ({
+                ...prev,
+                acces: 0,
+              }))
+            }, 2000)
+          }
+          break
+        }
+        case 'telegramId': {
+          setComponentState((prev) => ({
+            ...prev,
+            telegramId: value as string,
+          }))
+          break
+        }
+      }
     }
+    setComponentState((prev) => ({
+      ...prev,
+      loading: false,
+      modals: {
+        ...prev.modals,
+        [type]: false,
+      },
+    }))
   }
 
-  const handleNameUpdate = async (name: string) => {
-    setName(name)
-    if (worker) {
-      setLoading(true)
-      await updateName(name, worker.id)
-      await getWorkerData(worker.id)
-      setNameModalOpen(false)
-      setLoading(false)
-      toast('Имя обновлено')
-    } else {
-      setNameModalOpen(false)
-    }
+  const doInputChange = (type: 'name' | 'telegramId', value: string) => {
+    setComponentState((prev) => ({
+      ...prev,
+      input: {
+        ...prev.input,
+        [type]: value,
+      },
+    }))
   }
 
-  const handleAccecUpdate = async (accessId: number) => {
-    if (worker) {
-      setLoading(true)
-      await updateAccess(accessId, worker.id)
-      await getWorkerData(worker.id)
-      setNameModalOpen(false)
-      setLoading(false)
-      toast('Доступ обновлен')
-    }
-  }
-
-  const handleTelegramIdUpdate = async (telegramId: string) => {
-    setTelegramId(telegramId)
-    if (worker) {
-    } else {
-      setTelegramIdModalOpen(false)
-    }
-  }
-
-  const handleCreateWorker = async (
+  const doCreateWorker = async (
     name: string,
     color: string,
     telegramId: string
@@ -179,21 +247,21 @@ const WorkerSetting = ({
     <>
       <ModalInput
         onClose={() => {
-          setNameModalOpen(false)
+          doModalVisibility('name', false)
         }}
         closeButton={false}
-        isOpen={nameModalOpen}
+        isOpen={componentState.modals.name}
       >
         <div className="mb-2">Введите имя</div>
         <div className="flex items-center justify-center mb-4">
           <input
             type="text"
-            value={nameInput}
-            onChange={handleNameInputChange}
+            value={componentState.input.name}
+            onChange={(e) => doInputChange('name', e.target.value)}
             autoFocus={true}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleNameUpdate(nameInput)
+                doWorkerUpdate('name', componentState.input.name)
               }
             }}
             className="py-2 px-4 w-full border-1 border-[#2B7FFF] rounded-[6px]"
@@ -201,33 +269,34 @@ const WorkerSetting = ({
         </div>
         <AcceptButton
           acceptClick={() => {
-            handleNameUpdate(nameInput)
+            doWorkerUpdate('name', componentState.input.name)
           }}
           cancelClick={() => {
-            setNameModalOpen(false)
+            doInputChange('name', componentState.name)
+            doModalVisibility('name', false)
           }}
           topStyle={'grid grid-cols-2 gap-2 mt-1'}
           height={'44px'}
-          disabled={loading}
+          disabled={componentState.loading}
         />
       </ModalInput>
       <ModalInput
         onClose={() => {
-          setTelegramIdModalOpen(false)
+          doModalVisibility('telegramId', false)
         }}
         closeButton={false}
-        isOpen={telegramIdModalOpen}
+        isOpen={componentState.modals.telegramId}
       >
         <div className="mb-2">Введите TelegramID</div>
         <div className="flex items-center justify-center mb-2">
           <input
             type="text"
-            value={telegraIdInput}
-            onChange={handleTelegramIdInputChange}
+            value={componentState.input.telegramId}
+            onChange={(e) => doInputChange('telegramId', e.target.value)}
             autoFocus={true}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleTelegramIdUpdate(telegraIdInput)
+                doWorkerUpdate('telegramId', componentState.input.telegramId)
               }
             }}
             className="py-2 px-4 w-full border-1 border-[#2B7FFF] rounded-[6px]"
@@ -235,30 +304,31 @@ const WorkerSetting = ({
         </div>
         <AcceptButton
           acceptClick={() => {
-            handleTelegramIdUpdate(telegraIdInput)
+            doWorkerUpdate('telegramId', componentState.input.telegramId)
           }}
           cancelClick={() => {
-            setTelegramIdModalOpen(false)
+            doInputChange('telegramId', componentState.telegramId)
+            doModalVisibility('telegramId', false)
           }}
-          disabled={loading}
+          disabled={componentState.loading}
           topStyle={'grid grid-cols-2 gap-2 mt-1 h-[44px]'}
           height="44px"
         />
       </ModalInput>
       <ModalInput
         onClose={() => {
-          setColorPickerModalOpen(false)
+          doModalVisibility('color', false)
         }}
         closeButton={false}
-        isOpen={colorPickerModalOpen}
+        isOpen={componentState.modals.color}
       >
         <ModalColorPicker
           onClose={() => {
-            setColorPickerModalOpen(false)
+            doModalVisibility('color', false)
           }}
-          userName={name}
-          initColor={color}
-          selectColor={handleColorUpdate}
+          userName={componentState.name}
+          initColor={componentState.color}
+          selectColor={(color) => doWorkerUpdate('color', color)}
         />
       </ModalInput>
       <div className="h-12 bg-white grid grid-cols-3 items-center my-1 p-1">
@@ -266,7 +336,7 @@ const WorkerSetting = ({
           onClick={() => {
             router.back()
           }}
-          className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start"
+          className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start cursor-pointer"
         >
           <img src="/arrow_back.svg" alt="Назад" width={24} height={24} />
         </button>
@@ -274,37 +344,39 @@ const WorkerSetting = ({
         <div className="ms-4 text-xl w-fit font-semibold justify-self-center">
           Настройки
         </div>
-        {(workerId !== 'new' || telegramIdReq !== '') && (
-          <button
-            onClick={() => {
-              if (
-                telegramIdReq !== '' &&
-                nameReq !== '' &&
-                workerId === 'new'
-              ) {
-                handleDeleteRequest()
-              } else {
-                handleDeleteWorker(workerId)
-              }
-            }}
-            className="bg-white px-4 h-full w-fit rounded-[6px] justify-self-end"
-          >
-            <img src="/trash.svg" alt="Удалить" width={24} height={24} />
-          </button>
-        )}
+        {(workerId !== 'new' || telegramIdReq !== '') &&
+          mainData?.user.access_id === 1 &&
+          mainData.user.id !== worker?.id && (
+            <button
+              onClick={() => {
+                if (
+                  telegramIdReq !== '' &&
+                  nameReq !== '' &&
+                  workerId === 'new'
+                ) {
+                  handleDeleteRequest()
+                } else {
+                  doDeleteWorker(workerId)
+                }
+              }}
+              className="bg-white px-4 h-full w-fit rounded-[6px] justify-self-end cursor-pointer"
+            >
+              <img src="/trash.svg" alt="Удалить" width={24} height={24} />
+            </button>
+          )}
       </div>
       <div className="flex flex-col text-white">
         <div
           onClick={() => {
-            setNameModalOpen(true)
+            doModalVisibility('name', true)
           }}
-          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px]"
+          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px] cursor-pointer"
         >
           <div className=" ">Отображаемое имя</div>
           <div className="flex flex-row h-full items-center text-white">
             {workerId === 'new' || workerDataLoaded ? (
               <div className="me-2 flex items-center justify-center">
-                {name}
+                {componentState.name}
               </div>
             ) : (
               <img
@@ -321,17 +393,17 @@ const WorkerSetting = ({
 
         <div
           onClick={() => {
-            setColorPickerModalOpen(true)
+            doModalVisibility('color', true)
           }}
-          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px]"
+          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px] cursor-pointer"
         >
           <div className=" ">Цвет в расписании</div>
           <div className="flex flex-row h-full items-center">
             {workerId === 'new' || workerDataLoaded ? (
               <div
                 style={{
-                  background: color,
-                  color: getContrastTextColor(color),
+                  background: componentState.color,
+                  color: getContrastTextColor(componentState.color),
                 }}
                 className="h-[90%] aspect-square me-2 flex items-center justify-center border-2 border-white rounded-[6px]"
               >
@@ -352,9 +424,11 @@ const WorkerSetting = ({
         </div>
         <div
           onClick={() => {
-            if (workerId === 'new') setTelegramIdModalOpen(true)
+            if (workerId === 'new') {
+              doModalVisibility('telegramId', true)
+            }
           }}
-          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between rounded-[6px]"
+          className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between rounded-[6px] cursor-pointer"
           style={{
             background: workerId === 'new' ? '#2B7FFF' : 'gray',
           }}
@@ -363,7 +437,7 @@ const WorkerSetting = ({
           <div className="flex flex-row h-full items-center text-white">
             {workerId === 'new' || workerDataLoaded ? (
               <div className="me-2 flex items-center justify-center">
-                {telegramId}
+                {componentState.telegramId}
               </div>
             ) : (
               <img
@@ -382,13 +456,13 @@ const WorkerSetting = ({
           <div className="mx-2 mt-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px]">
             <div className=" ">Администратор</div>
             <div className="flex flex-row h-full items-center text-white">
-              {workerDataLoaded || loading ? (
+              {workerDataLoaded || componentState.loading ? (
                 <input
                   className="size-8"
                   type="checkbox"
                   checked={worker?.access_id === 1}
                   onChange={(e) => {
-                    handleAccecUpdate(e.target.checked ? 1 : 0)
+                    doWorkerUpdate('acces', e.target.checked ? 1 : 0)
                   }}
                 />
               ) : (
@@ -429,7 +503,7 @@ const WorkerSetting = ({
                     <div className="bg-white mt-1">
                       <div className="flex flex-row items-center justify-between">
                         <div
-                          className="py-1 flex-1 border-2 border-white flex justify-center"
+                          className="py-1 flex-1 border-2 border-white flex justify-center cursor-pointer"
                           style={{
                             background: !workplace.editable
                               ? '#2B7FFF'
@@ -443,7 +517,7 @@ const WorkerSetting = ({
                           Чтение
                         </div>
                         <div
-                          className="py-1 flex-1 border-2 border-white flex justify-center"
+                          className="py-1 flex-1 border-2 border-white flex justify-center cursor-pointer"
                           style={{
                             background: workplace.editable
                               ? '#2B7FFF'
@@ -469,7 +543,7 @@ const WorkerSetting = ({
                   toast('Назначения обновлены')
                 }}
                 cancelClick={notUpdateWorkplace}
-                disabled={loading}
+                disabled={componentState.loading}
                 topStyle="grid grid-cols-2 gap-2 mt-2 mx-2"
                 height={'48px'}
               />
@@ -479,10 +553,14 @@ const WorkerSetting = ({
         {workerId === 'new' ? (
           <AcceptButton
             acceptClick={() => {
-              handleCreateWorker(name, color, telegramId)
+              doCreateWorker(
+                componentState.name,
+                componentState.color,
+                componentState.telegramId
+              )
             }}
             cancelClick={router.back}
-            disabled={loading}
+            disabled={componentState.loading}
             topStyle="grid grid-cols-2 gap-2 mt-2 mx-2"
             height={'48px'}
           />

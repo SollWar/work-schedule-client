@@ -17,7 +17,7 @@ export const DateDropDown = ({ type, items }: DateDropDownProps) => {
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger
         disabled={currentSelected?.id === 'admin'}
-        className="text-white px-4 h-full flex items-center rounded-[6px] ms-1 focus:outline-none active:outline-none"
+        className="text-white px-4 h-full flex items-center rounded-[6px] ms-1 focus:outline-none active:outline-none cursor-pointer"
         style={{
           background: currentSelected?.id === 'admin' ? 'gray' : '#2B7FFF',
         }}
@@ -31,7 +31,7 @@ export const DateDropDown = ({ type, items }: DateDropDownProps) => {
               onSelect={() => {
                 selectDate(val)
               }}
-              className="px-4 py-2 cursor-default"
+              className="px-4 py-2 cursor-pointer"
               key={val}
             >
               {type === 'year' ? val : MONTH[val - 1]}

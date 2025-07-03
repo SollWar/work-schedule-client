@@ -40,7 +40,7 @@ const SettingsPage = () => {
           onClick={() => {
             router.back()
           }}
-          className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start"
+          className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start cursor-pointer"
         >
           <img src="/arrow_back.svg" alt="Назад" width={24} height={24} />
         </button>
@@ -97,7 +97,7 @@ const SettingsPage = () => {
                     )
                   }}
                   key={request.telegram_id}
-                  className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white"
+                  className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white cursor-pointer"
                 >
                   <div>{request.worker_name}</div>
                   <div>{formatPostgresDate(request.created_at)}</div>
@@ -142,7 +142,7 @@ const SettingsPage = () => {
                     router.push(`/settings/worker?id=${worker.id}`)
                   }}
                   key={worker.id}
-                  className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white"
+                  className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white cursor-pointer"
                 >
                   <div>{worker.name}</div>
                   <div>{worker.id}</div>
@@ -154,7 +154,7 @@ const SettingsPage = () => {
                 router.push(`/settings/worker?id=${'new'}`)
               }}
               key={'workplace new'}
-              className="mt-1 ms-4 py-2 px-1 bg-white border-2 border-[#2B7FFF] rounded-[6px] text-black"
+              className="mt-1 ms-4 py-2 px-1 bg-white border-2 border-[#2B7FFF] rounded-[6px] text-black cursor-pointer"
             >
               <div>Новый работник</div>
             </div>
@@ -196,7 +196,7 @@ const SettingsPage = () => {
                     router.push(`/settings/workplace?id=${workplace.id}`)
                   }}
                   key={workplace.id}
-                  className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white"
+                  className="mt-1 ms-4 py-2 flex flex-row justify-between px-2 bg-[#2B7FFF] rounded-[6px] text-white cursor-pointer"
                 >
                   <div>{workplace.name}</div>
                   <div>{workplace.id}</div>
@@ -208,7 +208,7 @@ const SettingsPage = () => {
                 router.push(`/settings/workplace?id=${'new'}`)
               }}
               key={'workplace new'}
-              className="mt-1 ms-4 py-2 px-1 bg-white border-2 border-[#2B7FFF] rounded-[6px] text-black"
+              className="mt-1 ms-4 py-2 px-1 bg-white border-2 border-[#2B7FFF] rounded-[6px] text-black cursor-pointer"
             >
               <div>Новый магазин</div>
             </div>

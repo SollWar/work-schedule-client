@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import { useWorkplaceData } from '@/src/hooks/useWorkplaceData'
 import { useEffect, useState } from 'react'
-import ModalInput from '../../components/Modals/ModalInput'
-import ModalColorPicker from '../../components/Modals/ModalColorPicker'
+import ModalInput from '../../../components/Modals/ModalInput'
+import ModalColorPicker from '../../../components/Modals/ModalColorPicker'
 import { useRouter } from 'next/navigation'
 import { getContrastTextColor } from '@/src/utils/colorsUtils'
 import { useUpdateWorkplaceData } from '../hooks/useUpdateWorkplaceData'
-import AcceptButton from '../../components/AcceptButton'
+import AcceptButton from '../../../components/AcceptButton'
 import { useToastStore } from '@/src/stores/toastStore'
 
 interface WorkplaceSettingProps {
@@ -26,6 +26,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
     },
     input: {
       name: '',
+      color: '#0070F3',
     },
   })
 
@@ -57,8 +58,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
     }
   }, [workplace])
 
-  const handleInputChange = (type: 'name' | 'color', value: string) => {
-    console.log(type, value)
+  const doInputChange = (type: 'name' | 'color', value: string) => {
     setComponentState((prev) => ({
       ...prev,
       input: {
@@ -68,10 +68,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
     }))
   }
 
-  const handleModalVisibility = (
-    type: 'name' | 'color',
-    visibility: boolean
-  ) => {
+  const doModalVisibility = (type: 'name' | 'color', visibility: boolean) => {
     setComponentState((prev) => ({
       ...prev,
       modals: {
@@ -81,7 +78,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
     }))
   }
 
-  const handleWorkplaceProp = async (type: 'color' | 'name', value: string) => {
+  const doWorkplaceUpdate = async (type: 'color' | 'name', value: string) => {
     setComponentState((prev) => ({
       ...prev,
       loading: true,
@@ -113,7 +110,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
     }))
   }
 
-  const handleDeleteWorkplace = async (workplaceId: string) => {
+  const doDeleteWorkplace = async (workplaceId: string) => {
     if (tapTo.del + 1 === 2) {
       await deleteWorkplace(workplaceId)
       toast(workplace?.name + ' удален')
@@ -133,7 +130,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
     }
   }
 
-  const handleCreateWorplace = async (name: string, color: string) => {
+  const doCreateWorplace = async (name: string, color: string) => {
     if (name !== '' && color !== '') {
       await createWorkplace(name, color)
       toast(name + ' создан')
@@ -145,7 +142,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
     <>
       <ModalInput
         onClose={() => {
-          handleModalVisibility('name', false)
+          doModalVisibility('name', false)
         }}
         closeButton={false}
         isOpen={componentState.modals.name}
@@ -156,11 +153,11 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
             type="text"
             id="name"
             value={componentState.input.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
+            onChange={(e) => doInputChange('name', e.target.value)}
             autoFocus={true}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleWorkplaceProp('name', componentState.input.name)
+                doWorkplaceUpdate('name', componentState.input.name)
               }
             }}
             className="py-2 px-4 w-full border-1 border-[#2B7FFF] rounded-[6px]"
@@ -168,11 +165,11 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
         </div>
         <AcceptButton
           acceptClick={() => {
-            handleWorkplaceProp('name', componentState.input.name)
+            doWorkplaceUpdate('name', componentState.input.name)
           }}
           cancelClick={() => {
-            handleInputChange('name', componentState.name)
-            handleModalVisibility('name', false)
+            doInputChange('name', componentState.name)
+            doModalVisibility('name', false)
           }}
           topStyle={'grid grid-cols-2 gap-2 mt-1'}
           height={'44px'}
@@ -181,18 +178,18 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
       </ModalInput>
       <ModalInput
         onClose={() => {
-          handleModalVisibility('color', false)
+          doModalVisibility('color', false)
         }}
         closeButton={false}
         isOpen={componentState.modals.color}
       >
         <ModalColorPicker
           onClose={() => {
-            handleModalVisibility('color', false)
+            doModalVisibility('color', false)
           }}
           userName={componentState.name}
           initColor={componentState.color}
-          selectColor={(color) => handleWorkplaceProp('color', color)}
+          selectColor={(color) => doWorkplaceUpdate('color', color)}
         />
       </ModalInput>
       <div className="h-12 bg-white grid grid-cols-3 items-center my-1 p-1">
@@ -200,7 +197,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
           onClick={() => {
             router.back()
           }}
-          className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start"
+          className="bg-[#2B7FFF] px-4 h-full w-fit rounded-[6px] justify-self-start cursor-pointer"
         >
           <img src="/arrow_back.svg" alt="Назад" width={24} height={24} />
         </button>
@@ -211,9 +208,9 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
         {workplaceId !== 'new' && (
           <button
             onClick={() => {
-              handleDeleteWorkplace(workplaceId)
+              doDeleteWorkplace(workplaceId)
             }}
-            className="bg-white px-4 h-full w-fit rounded-[6px] justify-self-end"
+            className="bg-white px-4 h-full w-fit rounded-[6px] justify-self-end cursor-pointer"
           >
             <img src="/trash.svg" alt="Удалить" width={24} height={24} />
           </button>
@@ -223,9 +220,9 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
       <div className="flex flex-col text-white">
         <div
           onClick={() => {
-            handleModalVisibility('name', true)
+            doModalVisibility('name', true)
           }}
-          className="mx-2 mt-2 py-3 px-2 flex flex-row items-center justify-between  bg-[#2B7FFF] rounded-[6px]"
+          className="mx-2 mt-2 py-3 px-2 flex flex-row items-center justify-between  bg-[#2B7FFF] rounded-[6px] cursor-pointer"
         >
           <div className=" ">Отображаемое имя</div>
           <div className="flex flex-row h-full items-center text-white">
@@ -236,8 +233,8 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
           </div>
         </div>
         <div
-          onClick={() => handleModalVisibility('color', true)}
-          className="mx-2 mt-2 mb-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px]"
+          onClick={() => doModalVisibility('color', true)}
+          className="mx-2 mt-2 mb-1 px-2 h-[48px] flex flex-row items-center justify-between bg-[#2B7FFF] rounded-[6px] cursor-pointer"
         >
           <div className=" ">Цвет в расписании</div>
           <div className="flex flex-row h-full items-center">
@@ -257,7 +254,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
       {workplaceId === 'new' ? (
         <AcceptButton
           acceptClick={() =>
-            handleCreateWorplace(componentState.name, componentState.color)
+            doCreateWorplace(componentState.name, componentState.color)
           }
           cancelClick={router.back}
           topStyle={'grid grid-cols-2 gap-2 mt-1 mx-2'}

@@ -21,7 +21,7 @@ const AcceptButton = ({
         onClick={cancelClick}
         disabled={disabled}
         className={clsx(
-          'flex items-center justify-center text-xl rounded-[6px]',
+          'flex items-center justify-center text-xl rounded-[6px] cursor-pointer',
           `h-[${height}]`,
           disabled ? 'bg-gray-500' : 'bg-transparent',
           disabled ? 'text-white' : 'text-black',
@@ -33,7 +33,7 @@ const AcceptButton = ({
       <button
         onClick={acceptClick}
         className={clsx(
-          'flex items-center justify-center text-xl rounded-[6px] text-white',
+          'flex items-center justify-center text-xl rounded-[6px] text-white cursor-pointer',
           `h-[${height}]`,
           disabled ? 'bg-gray-500' : 'bg-[#2B7FFF]'
         )}

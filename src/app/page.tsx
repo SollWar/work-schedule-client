@@ -17,31 +17,34 @@ export default function Home() {
   useSystemTheme()
   const { toast } = useToastStore()
   const { themeConst } = useThemeStore()
-  const { mainData, mainStoreInit, telegramId } = useMainStore()
+  const { mainData, mainStoreInit, telegramId, error } = useMainStore()
   const { telegramInitData } = useTelegramAuth()
   const { currentSelected } = useScheduleStore()
   const [loading, setLoading] = useState(mainData === null)
 
   useEffect(() => {
-    if (telegramInitData !== '') {
+    if (telegramInitData !== '' && telegramId !== '') {
       mainStoreInit()
-    }
-    if (telegramId === 'none') {
-      toast('Пользователь не найден')
     }
   }, [telegramId, telegramInitData])
 
   useEffect(() => {
-    if (mainData) {
+    if (error === 'no_user') {
+      toast('Пользователь не найден')
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (mainData && telegramId !== '') {
       setLoading(false)
     }
-  }, [mainData])
+  }, [mainData, telegramId])
 
   if (loading)
     return (
       <div className={styles.main}>
         <div className={styles.body}>
-          {telegramId === 'none' ? (
+          {error === 'no_user' ? (
             <RequestPage />
           ) : (
             <div>

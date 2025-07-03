@@ -4,7 +4,7 @@ import fetchTyped from '../utils/fetchTyped'
 import { useMainStore } from '../stores/mainStore'
 import { Workplace, WorkplaceForSetting } from '../types/Workplace'
 import { useGetData } from '../app/settings/hooks/useGetData'
-import { useUpdateWorkerData } from '../app/settings/worker/hooks/useUpdateWorkerData'
+import { useUpdateWorkerData } from '../app/settings/(details)/worker/hooks/useUpdateWorkerData'
 
 export const useWorkerData = () => {
   const [worker, setWorker] = useState<Worker>()

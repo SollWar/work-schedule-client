@@ -63,7 +63,7 @@ export const PlaceDropDown = () => {
 
   return (
     <DropdownMenu.Root modal={false}>
-      <DropdownMenu.Trigger className="bg-[#2B7FFF] text-white px-4 h-full flex items-center rounded-[6px] ms-1 focus:outline-none active:outline-none">
+      <DropdownMenu.Trigger className="bg-[#2B7FFF] text-white px-4 h-full flex items-center rounded-[6px] ms-1 focus:outline-none active:outline-none cursor-pointer">
         {selected?.name}
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>

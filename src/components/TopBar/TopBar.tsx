@@ -15,7 +15,7 @@ export const TopBar = () => {
     <div className="h-12 bg-white flex justify-between my-1 p-1">
       <div className="flex flex-row items-center">
         <button
-          className="px-4 h-full flex items-center rounded-[6px]"
+          className="px-4 h-full flex items-center rounded-[6px] cursor-pointer"
           style={{
             background: themeConst.button,
           }}

@@ -39,7 +39,7 @@ export const CalendarDropDown = ({
         style={{
           border: isOpen ? '2px red dashed' : '',
         }}
-        className="rounded-[6px] w-full h-full flex justify-center items-center text-2xl focus:outline-none active:outline-none"
+        className="rounded-[6px] w-full h-full flex justify-center items-center text-2xl focus:outline-none active:outline-none  cursor-pointer"
       >
         {children}
       </DropdownMenu.Trigger>
@@ -56,7 +56,7 @@ export const CalendarDropDown = ({
                 background: val.color,
                 color: getContrastTextColor(val.color),
               }}
-              className="text-xl p-2.5 px-5 rounded-[6px] mb-0.5"
+              className="text-xl p-2.5 px-5 rounded-[6px] mb-0.5 cursor-pointer"
               key={ind}
               onClick={() => {
                 setTimeout(() => onSelectChange(day, val.id), 0)
@@ -71,7 +71,7 @@ export const CalendarDropDown = ({
               background: 'white',
               color: 'black',
             }}
-            className="text-xl p-2.5 px-5 rounded-[6px] mb-0.5"
+            className="text-xl p-2.5 px-5 rounded-[6px] mb-0.5 cursor-pointer"
             key={'day_off'}
             onClick={() => {
               setTimeout(() => onSelectChange(day, '0'), 0)

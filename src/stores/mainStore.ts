@@ -8,6 +8,7 @@ import { ScheduleType } from '../types/Schedule'
 interface MainStoreState {
   mainData: MainData | null
   telegramId: string
+  error: 'no_user' | ''
   initData: () => { selected: Worker | Workplace; type: ScheduleType }
   mainStoreInit: () => void
   setTelegramId: (telegramId: string) => void
@@ -16,6 +17,7 @@ interface MainStoreState {
 export const useMainStore = create<MainStoreState>((set, get) => ({
   mainData: null,
   telegramId: '',
+  error: '',
   initData() {
     const currMainData = get().mainData
     const user: Worker = currMainData?.user ?? {
@@ -47,7 +49,7 @@ export const useMainStore = create<MainStoreState>((set, get) => ({
   setTelegramId(telegramId) {
     set((prev) => ({
       ...prev,
-      telegramId: telegramId,
+      telegramId,
     }))
   },
   async mainStoreInit() {
@@ -67,7 +69,7 @@ export const useMainStore = create<MainStoreState>((set, get) => ({
       set((prev) => ({
         ...prev,
         mainData: null,
-        telegramId: 'none',
+        error: 'no_user',
       }))
     }
   },

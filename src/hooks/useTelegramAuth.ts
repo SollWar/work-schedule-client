@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import fetchTyped from '../utils/fetchTyped'
+import { useMainStore } from '../stores/mainStore'
 
 export const useTelegramAuth = () => {
   const [telegramInitData, setTelegramInitData] = useState('')
-  const [telegramId, setTelegramId] = useState('')
+  const { telegramId, setTelegramId } = useMainStore()
 
   useEffect(() => {
     setTelegramInitData('6376611308')
@@ -22,10 +23,10 @@ export const useTelegramAuth = () => {
   }, [])
 
   useEffect(() => {
-    if (telegramInitData !== '') {
+    if (telegramInitData !== '' && telegramId === '') {
       telegramAuth()
     }
-  }, [telegramInitData])
+  }, [telegramInitData, telegramId])
 
   const telegramAuth = async () => {
     try {
@@ -41,12 +42,12 @@ export const useTelegramAuth = () => {
           }),
         }
       )
-
       setTelegramId(result)
     } catch (e) {
+      setTelegramId('none')
       console.log(e)
     }
   }
 
-  return { telegramId, telegramInitData }
+  return { telegramInitData }
 }

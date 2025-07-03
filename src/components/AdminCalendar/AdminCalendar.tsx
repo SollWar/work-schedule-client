@@ -23,7 +23,7 @@ const AdminCalendar = () => {
             {adminSchedule.map((val) => (
               <div
                 key={val.selected.id}
-                className="flex flex-col items-center rounded-md bg-[#2B7FFF] text-white border-4 border-[#2B7FFF]"
+                className="flex flex-col items-center rounded-md bg-[#2B7FFF] text-white border-4 border-[#2B7FFF] cursor-pointer"
                 onClick={() => {
                   getSchedule(
                     'workplace',

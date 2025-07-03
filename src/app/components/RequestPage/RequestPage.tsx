@@ -1,5 +1,5 @@
 import { useRequest } from '@/src/hooks/useRequest'
-import { useTelegramAuth } from '@/src/hooks/useTelegramAuth'
+import { useMainStore } from '@/src/stores/mainStore'
 import { useToastStore } from '@/src/stores/toastStore'
 import clsx from 'clsx'
 import { useState } from 'react'
@@ -7,7 +7,7 @@ import { useState } from 'react'
 const RequestPage = () => {
   const { toast } = useToastStore()
   const { createRequest } = useRequest()
-  const { telegramId } = useTelegramAuth()
+  const { telegramId } = useMainStore()
   const [requestAccess, setRequestAccess] = useState<boolean>()
   const [nameInput, setNameInput] = useState('')
   const [workplaceInput, setWorkplaceInput] = useState('')
@@ -34,7 +34,7 @@ const RequestPage = () => {
     return (
       <div className="flex flex-col text-xl justify-center">
         <div>Нет доступа, запросить?</div>
-        <div className="grid grid-cols-2 gap-4 mt-10">
+        <div className="grid grid-cols-2 gap-4 mt-10 cursor-pointer">
           <button
             onClick={() => {
               setRequestAccess(false)
@@ -52,7 +52,7 @@ const RequestPage = () => {
               setRequestAccess(true)
             }}
             className={clsx(
-              'flex items-center justify-center rounded-[6px] text-white bg-[#2B7FFF]',
+              'flex items-center justify-center rounded-[6px] text-white bg-[#2B7FFF] cursor-pointer',
               `h-[48px]`
             )}
           >
@@ -93,7 +93,7 @@ const RequestPage = () => {
             sendRequestAccess()
           }}
           className={clsx(
-            'flex items-center justify-center rounded-[6px] mt-4 text-white ',
+            'flex items-center justify-center rounded-[6px] mt-4 text-white cursor-pointer',
             `h-[48px]`,
             nameInput === '' || workplaceInput === ''
               ? 'bg-[gray]'
@@ -115,7 +115,7 @@ const RequestPage = () => {
           }}
           className={clsx(
             'mt-10',
-            'flex items-center justify-center rounded-[6px] text-white bg-[#2B7FFF]',
+            'flex items-center justify-center rounded-[6px] text-white bg-[#2B7FFF] cursor-pointer',
             `h-[48px]`
           )}
         >
