@@ -118,7 +118,7 @@ const WorkerSetting = ({
       toast('Нажмите еще раз для удаления')
       setTapTo((prev) => ({
         ...prev,
-        del: tapTo.del++,
+        del: tapTo.del + 1,
       }))
       setTimeout(() => {
         setTapTo((prev) => ({
@@ -176,7 +176,7 @@ const WorkerSetting = ({
             toast('Нажмите еще раз что-бы изменить доступ')
             setTapTo((prev) => ({
               ...prev,
-              acces: tapTo.acces++,
+              acces: tapTo.acces + 1,
             }))
             setTimeout(() => {
               setTapTo((prev) => ({

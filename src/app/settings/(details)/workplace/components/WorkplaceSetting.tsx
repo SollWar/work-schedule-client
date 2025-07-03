@@ -119,7 +119,7 @@ const WorkplaceSetting = ({ workplaceId }: WorkplaceSettingProps) => {
       toast('Нажмите еще раз для удаления')
       setTapTo((prev) => ({
         ...prev,
-        del: tapTo.del++,
+        del: tapTo.del + 1,
       }))
       setTimeout(() => {
         setTapTo((prev) => ({
