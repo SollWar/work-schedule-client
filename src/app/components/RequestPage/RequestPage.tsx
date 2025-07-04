@@ -1,16 +1,34 @@
 import { useRequest } from '@/src/hooks/useRequest'
-import { useMainStore } from '@/src/stores/mainStore'
 import { useToastStore } from '@/src/stores/toastStore'
 import clsx from 'clsx'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const RequestPage = () => {
   const { toast } = useToastStore()
   const { createRequest } = useRequest()
-  const { telegramId } = useMainStore()
+  const [telegramId, setTelegramId] = useState('')
   const [requestAccess, setRequestAccess] = useState<boolean>()
   const [nameInput, setNameInput] = useState('')
   const [workplaceInput, setWorkplaceInput] = useState('')
+
+  useEffect(() => {
+    const importWebApp = async () => {
+      const { default: WebApp } = await import('@twa-dev/sdk')
+
+      WebApp.ready()
+      WebApp.expand()
+      const params = new URLSearchParams(WebApp.initData)
+      const userString = params.get('user')
+      const user = JSON.parse(decodeURIComponent(userString as string))
+      const telegramID: string = user.id
+
+      setTelegramId(telegramID)
+    }
+
+    if (typeof window !== 'undefined') {
+      importWebApp()
+    }
+  }, [])
 
   const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNameInput(e.target.value)

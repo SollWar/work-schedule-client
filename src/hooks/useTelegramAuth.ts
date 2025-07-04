@@ -4,29 +4,28 @@ import { useMainStore } from '../stores/mainStore'
 
 export const useTelegramAuth = () => {
   const [telegramInitData, setTelegramInitData] = useState('')
-  const { telegramId, setTelegramId } = useMainStore()
+  const { authString, setAuthString } = useMainStore()
 
   useEffect(() => {
-    setTelegramInitData('6376611308')
-    // const importWebApp = async () => {
-    //   const { default: WebApp } = await import('@twa-dev/sdk')
+    const importWebApp = async () => {
+      const { default: WebApp } = await import('@twa-dev/sdk')
 
-    //   WebApp.ready()
-    //   WebApp.expand()
+      WebApp.ready()
+      WebApp.expand()
 
-    //   setTelegramInitData(WebApp.initData)
-    // }
+      setTelegramInitData(WebApp.initData)
+    }
 
-    // if (typeof window !== 'undefined') {
-    //   importWebApp()
-    // }
+    if (typeof window !== 'undefined') {
+      importWebApp()
+    }
   }, [])
 
   useEffect(() => {
-    if (telegramInitData !== '' && telegramId === '') {
+    if (telegramInitData !== '' && authString === '') {
       telegramAuth()
     }
-  }, [telegramInitData, telegramId])
+  }, [telegramInitData, authString])
 
   const telegramAuth = async () => {
     try {
@@ -42,9 +41,9 @@ export const useTelegramAuth = () => {
           }),
         }
       )
-      setTelegramId(result)
+      setAuthString(result)
     } catch (e) {
-      setTelegramId('none')
+      setAuthString('none')
       console.log(e)
     }
   }

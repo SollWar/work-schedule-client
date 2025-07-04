@@ -17,16 +17,16 @@ export default function Home() {
   useSystemTheme()
   const { toast } = useToastStore()
   const { themeConst } = useThemeStore()
-  const { mainData, mainStoreInit, telegramId, error } = useMainStore()
+  const { mainData, mainStoreInit, authString, error } = useMainStore()
   const { telegramInitData } = useTelegramAuth()
   const { currentSelected } = useScheduleStore()
   const [loading, setLoading] = useState(mainData === null)
 
   useEffect(() => {
-    if (telegramInitData !== '' && telegramId !== '') {
+    if (telegramInitData !== '' && authString !== '') {
       mainStoreInit()
     }
-  }, [telegramId, telegramInitData])
+  }, [authString, telegramInitData])
 
   useEffect(() => {
     if (error === 'no_user') {
@@ -35,10 +35,10 @@ export default function Home() {
   }, [error])
 
   useEffect(() => {
-    if (mainData && telegramId !== '') {
+    if (mainData && authString !== '') {
       setLoading(false)
     }
-  }, [mainData, telegramId])
+  }, [mainData, authString])
 
   if (loading)
     return (

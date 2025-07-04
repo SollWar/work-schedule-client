@@ -7,16 +7,16 @@ import { ScheduleType } from '../types/Schedule'
 
 interface MainStoreState {
   mainData: MainData | null
-  telegramId: string
+  authString: string
   error: 'no_user' | ''
   initData: () => { selected: Worker | Workplace; type: ScheduleType }
   mainStoreInit: () => void
-  setTelegramId: (telegramId: string) => void
+  setAuthString: (authString: string) => void
 }
 
 export const useMainStore = create<MainStoreState>((set, get) => ({
   mainData: null,
-  telegramId: '',
+  authString: '',
   error: '',
   initData() {
     const currMainData = get().mainData
@@ -46,16 +46,21 @@ export const useMainStore = create<MainStoreState>((set, get) => ({
         type: 'workplace',
       }
   },
-  setTelegramId(telegramId) {
+  setAuthString(authString) {
     set((prev) => ({
       ...prev,
-      telegramId,
+      authString,
     }))
   },
   async mainStoreInit() {
     try {
       const result = await fetchTyped<MainData>(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main`,
+        {
+          headers: {
+            Authorization: get().authString,
+          },
+        }
       )
       set((prev) => ({
         ...prev,

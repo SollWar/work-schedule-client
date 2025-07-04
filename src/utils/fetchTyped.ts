@@ -2,9 +2,13 @@ export default async function fetchTyped<T>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
+  const headers = {
+    ...(options.headers || {}),
+  }
+
   const fetchOptions: RequestInit = {
     ...options,
-    credentials: 'include',
+    headers,
   }
 
   const res = await fetch(url, fetchOptions)
