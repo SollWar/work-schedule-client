@@ -1,7 +1,7 @@
 import { Schedule, ScheduleType } from '../types/Schedule'
 import { Workplace } from '../types/Workplace'
 import { Worker } from '../types/Worker'
-import fetchTyped from '../utils/fetchTyped'
+import { fetchWithAuth } from '../utils/fetchTyped'
 import { getDaysInMonth } from '../utils/dateUtils'
 
 export const fetchSchedule = async (
@@ -18,13 +18,13 @@ export const fetchSchedule = async (
   if (type === 'worker') {
     try {
       const [schedule, selected, entities] = await Promise.all([
-        fetchTyped<Schedule>(
+        fetchWithAuth<Schedule>(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/api/schedule/worker?worker_id=${id}&year=${year}&month=${month}`
         ),
-        fetchTyped<Worker>(
+        fetchWithAuth<Worker>(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/?id=${id}`
         ),
-        fetchTyped<Workplace[]>(
+        fetchWithAuth<Workplace[]>(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/user?worker_id=${id}`
         ),
       ])
@@ -42,13 +42,13 @@ export const fetchSchedule = async (
   } else if (type === 'workplace') {
     try {
       const [schedules, selected, entities] = await Promise.all([
-        fetchTyped<Schedule[]>(
+        fetchWithAuth<Schedule[]>(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/api/schedule/workplace?workplace_id=${id}&year=${year}&month=${month}`
         ),
-        fetchTyped<Workplace>(
+        fetchWithAuth<Workplace>(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/?id=${id}`
         ),
-        fetchTyped<Workplace[]>(
+        fetchWithAuth<Workplace[]>(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/workplace?workplace_id=${id}`
         ),
       ])

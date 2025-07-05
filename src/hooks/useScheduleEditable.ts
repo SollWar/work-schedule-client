@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import fetchTyped from '../utils/fetchTyped'
+import { fetchWithAuth } from '../utils/fetchTyped'
 import { useScheduleStore } from '../stores/scheduleStore'
 import { ScheduleType } from '../types/Schedule'
 
@@ -32,7 +32,7 @@ export const useScheduleEditable = () => {
     month: number
   ) => {
     updatingSchedule()
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/schedule/update`,
       {
         method: 'POST',

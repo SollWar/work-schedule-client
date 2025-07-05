@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import fetchTyped from '../utils/fetchTyped'
+import { fetchWithAuth } from '../utils/fetchTyped'
 import { MainData } from '../types/MainData'
 import { Workplace } from '../types/Workplace'
 import { Worker } from '../types/Worker'
@@ -54,13 +54,8 @@ export const useMainStore = create<MainStoreState>((set, get) => ({
   },
   async mainStoreInit() {
     try {
-      const result = await fetchTyped<MainData>(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main`,
-        {
-          headers: {
-            Authorization: get().authString,
-          },
-        }
+      const result = await fetchWithAuth<MainData>(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/main`
       )
       set((prev) => ({
         ...prev,
@@ -79,3 +74,5 @@ export const useMainStore = create<MainStoreState>((set, get) => ({
     }
   },
 }))
+
+export const mainStore = useMainStore

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Worker } from '../types/Worker'
-import fetchTyped from '../utils/fetchTyped'
+import { fetchWithAuth } from '../utils/fetchTyped'
 import { useMainStore } from '../stores/mainStore'
 import { Workplace, WorkplaceForSetting } from '../types/Workplace'
 import { useGetData } from '../app/settings/hooks/useGetData'
@@ -89,13 +89,13 @@ export const useWorkerData = () => {
 
   const getWorkerData = async (workerId: string | null) => {
     const [worker, telegramId] = await Promise.all([
-      fetchTyped<Worker>(
+      fetchWithAuth<Worker>(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker?id=${workerId}`,
         {
           method: 'GET',
         }
       ),
-      fetchTyped<string>(
+      fetchWithAuth<string>(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/telegram?id=${workerId}`,
         {
           method: 'GET',
@@ -111,7 +111,7 @@ export const useWorkerData = () => {
 
   const getWorkerWorkplaces = async (workerId: string | null) => {
     await getAllWorkplaces()
-    const response = await fetchTyped<WorkplaceForSetting[]>(
+    const response = await fetchWithAuth<WorkplaceForSetting[]>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/user?worker_id=${workerId}`,
       {
         method: 'GET',

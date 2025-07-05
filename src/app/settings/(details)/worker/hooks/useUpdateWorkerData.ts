@@ -1,9 +1,9 @@
 import { WorkplaceForSetting } from '@/src/types/Workplace'
-import fetchTyped from '@/src/utils/fetchTyped'
+import { fetchWithAuth } from '@/src/utils/fetchTyped'
 
 export const useUpdateWorkerData = () => {
   const deleteWorker = async (workerId: string) => {
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/delete`,
       {
         method: 'DELETE',
@@ -23,7 +23,7 @@ export const useUpdateWorkerData = () => {
     access_id: string,
     telegram_id: string
   ): Promise<string> => {
-    const response = await fetchTyped<string>(
+    const response = await fetchWithAuth<string>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/create`,
       {
         method: 'POST',
@@ -45,7 +45,7 @@ export const useUpdateWorkerData = () => {
     workerId: string,
     workplaces: WorkplaceForSetting[]
   ): Promise<boolean> => {
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/update/workplaces`,
       {
         method: 'POST',
@@ -65,7 +65,7 @@ export const useUpdateWorkerData = () => {
     accessId: number,
     workerId: string
   ): Promise<boolean> => {
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/update`,
       {
         method: 'POST',
@@ -85,7 +85,7 @@ export const useUpdateWorkerData = () => {
     name: string,
     workerId: string
   ): Promise<boolean> => {
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/update`,
       {
         method: 'POST',
@@ -104,7 +104,7 @@ export const useUpdateWorkerData = () => {
     color: string,
     workerId: string
   ): Promise<boolean> => {
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/update`,
       {
         method: 'POST',

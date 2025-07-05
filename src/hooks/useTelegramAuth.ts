@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import fetchTyped from '../utils/fetchTyped'
+import { fetchWithAuth } from '../utils/fetchTyped'
 import { useMainStore } from '../stores/mainStore'
 
 export const useTelegramAuth = () => {
@@ -29,7 +29,7 @@ export const useTelegramAuth = () => {
 
   const telegramAuth = async () => {
     try {
-      const result = await fetchTyped<string>(
+      const result = await fetchWithAuth<string>(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/login/telegram`,
         {
           method: 'POST',

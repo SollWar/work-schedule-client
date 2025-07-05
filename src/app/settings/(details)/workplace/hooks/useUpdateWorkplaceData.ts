@@ -1,9 +1,9 @@
-import fetchTyped from '@/src/utils/fetchTyped'
+import { fetchWithAuth } from '@/src/utils/fetchTyped'
 
 export const useUpdateWorkplaceData = () => {
   const deleteWorkplace = async (workplaceId: string) => {
     console.log(workplaceId)
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/delete`,
       {
         method: 'DELETE',
@@ -21,7 +21,7 @@ export const useUpdateWorkplaceData = () => {
     name: string,
     color: string
   ): Promise<boolean> => {
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/create`,
       {
         method: 'POST',
@@ -41,7 +41,7 @@ export const useUpdateWorkplaceData = () => {
     name: string,
     workplaceId: string
   ): Promise<boolean> => {
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/update`,
       {
         method: 'POST',
@@ -60,7 +60,7 @@ export const useUpdateWorkplaceData = () => {
     color: string,
     workplaceId: string
   ): Promise<boolean> => {
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/update`,
       {
         method: 'POST',

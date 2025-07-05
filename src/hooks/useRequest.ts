@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import fetchTyped from '../utils/fetchTyped'
+import { fetchWithAuth } from '../utils/fetchTyped'
 import { Request } from '../types/Request'
 
 export const useRequest = () => {
@@ -7,7 +7,7 @@ export const useRequest = () => {
   const [requestsAvailable, setRequestsAvailable] = useState<boolean>(false)
   const getRequests = async () => {
     setRequestsAvailable(false)
-    const response = await fetchTyped<Request[]>(
+    const response = await fetchWithAuth<Request[]>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/request/all`,
       {
         method: 'GET',
@@ -18,7 +18,7 @@ export const useRequest = () => {
     setRequests(response)
   }
   const deleteRequest = async (telegramId: string) => {
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/request/delete`,
       {
         method: 'DELETE',
@@ -37,7 +37,7 @@ export const useRequest = () => {
     workerName: string,
     workplaceName: string
   ): Promise<boolean> => {
-    const response = await fetchTyped<boolean>(
+    const response = await fetchWithAuth<boolean>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/request/create`,
       {
         method: 'POST',

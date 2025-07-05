@@ -1,6 +1,6 @@
 import { Workplace } from '@/src/types/Workplace'
 import { Worker } from '@/src/types/Worker'
-import fetchTyped from '@/src/utils/fetchTyped'
+import { fetchWithAuth } from '@/src/utils/fetchTyped'
 import { useState } from 'react'
 
 export const useGetData = () => {
@@ -8,7 +8,7 @@ export const useGetData = () => {
   const [workplaces, setWorkplaces] = useState<Workplace[]>([])
 
   const getWorkers = async () => {
-    const response = await fetchTyped<Worker[]>(
+    const response = await fetchWithAuth<Worker[]>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/worker/all`,
       {
         method: 'GET',
@@ -18,7 +18,7 @@ export const useGetData = () => {
   }
 
   const getWorkplaces = async () => {
-    const response = await fetchTyped<Workplace[]>(
+    const response = await fetchWithAuth<Workplace[]>(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/workplace/all`,
       {
         method: 'GET',
